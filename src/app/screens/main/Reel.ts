@@ -143,4 +143,15 @@ export class Reel {
   public getStrips(): SymbolStrip[] {
     return this.strips;
   }
+
+  /** Get the reel's configuration */
+  public getConfig(): ReelConfig {
+    return this.config;
+  }
+
+  /** Set the middle symbol of the next spin (strip2) */
+  public setNextSpinMiddleSymbol(symbol: string): void {
+    const middleIndex = Math.floor(this.config.visibleSymbols / 2);
+    this.strips[1].setSymbolAt(middleIndex, symbol);
+  }
 } 

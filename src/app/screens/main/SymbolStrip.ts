@@ -88,4 +88,11 @@ export class SymbolStrip {
   public getPosition(): { x: number; y: number } {
     return { x: this.container.x, y: this.container.y };
   }
+
+  /** Set a specific symbol at the given index */
+  public setSymbolAt(index: number, symbol: string): void {
+    if (index >= 0 && index < this.symbols.length) {
+      this.symbols[index].text = symbol;
+    }
+  }
 } 

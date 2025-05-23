@@ -9,6 +9,7 @@ import { PausePopup } from "../../popups/PausePopup";
 import { SettingsPopup } from "../../popups/SettingsPopup";
 
 import { SlotMachine } from "./SlotMachine";
+import { SettingsPanel } from "./SettingsPanel";
 
 /** The screen that holds the app */
 export class MainScreen extends Container {
@@ -18,6 +19,7 @@ export class MainScreen extends Container {
   public mainContainer: Container;
   private pauseButton: FancyButton;
   private settingsButton: FancyButton;
+  public settingsPanel: SettingsPanel;
   private slotMachine: SlotMachine;
   private paused = false;
 
@@ -27,6 +29,8 @@ export class MainScreen extends Container {
     this.mainContainer = new Container();
     this.addChild(this.mainContainer);
     this.slotMachine = new SlotMachine();
+    this.settingsPanel = new SettingsPanel();
+    this.addChild(this.settingsPanel);
 
     const buttonAnimations = {
       hover: {
@@ -89,15 +93,14 @@ export class MainScreen extends Container {
 
   /** Resize the screen, fired whenever window size changes */
   public resize(width: number, height: number) {
-    const centerX = width * 0.5;
-    const centerY = height * 0.5;
-
-    this.mainContainer.x = centerX;
-    this.mainContainer.y = centerY;
+    this.mainContainer.x = 0;
+    this.mainContainer.y = 0;
     this.pauseButton.x = 30;
     this.pauseButton.y = 30;
     this.settingsButton.x = width - 30;
     this.settingsButton.y = 30;
+    this.settingsPanel.resize(width, height);
+    this.slotMachine.resize(width, height);
   }
 
   /** Show screen with animations */
@@ -107,6 +110,7 @@ export class MainScreen extends Container {
     const elementsToAnimate = [
       this.pauseButton,
       this.settingsButton,
+      this.settingsPanel,
     ];
 
     let finalPromise!: AnimationPlaybackControls;
