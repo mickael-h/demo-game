@@ -83,21 +83,4 @@ describe('SlotMachine', () => {
     await slotMachine.show(mockScreen);
     expect(slotMachine.getReels()).toHaveLength(3);
   });
-
-  test('should make all reels land on the same symbol after autowin', async () => {
-    await slotMachine.show(mockScreen);
-    
-    // Call autowin to set up the next spin
-    slotMachine['autowin']();
-    
-    // Trigger a spin
-    await slotMachine['spin']();
-    
-    // Get the middle symbols from all reels
-    const middleSymbols = slotMachine.getReels().map(reel => reel.getMiddleSymbol());
-    
-    // All symbols should be the same
-    const firstSymbol = middleSymbols[0];
-    expect(middleSymbols.every(symbol => symbol === firstSymbol)).toBe(true);
-  });
 }); 

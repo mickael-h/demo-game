@@ -1,5 +1,4 @@
 import { Container, Graphics, Text } from "pixi.js";
-import { InfoPanel } from "./InfoPanel";
 
 const BET_AMOUNTS = [1, 5, 20];
 
@@ -22,11 +21,9 @@ export class BetPanel {
   private container: Container;
   private betButtons: Graphics[] = [];
   private currentBet: number = 1;
-  private infoPanel: InfoPanel;
 
-  constructor(infoPanel: InfoPanel) {
+  constructor() {
     this.container = new Container();
-    this.infoPanel = infoPanel;
     this.initializeBetButtons();
   }
 
@@ -85,7 +82,6 @@ export class BetPanel {
   private setBet(amount: number): void {
     this.currentBet = amount;
     this.updateBetButtonColors();
-    this.infoPanel.updateBet(amount);
   }
 
   private updateBetButtonColors(): void {

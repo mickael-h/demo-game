@@ -4,18 +4,9 @@ import { Reel, ReelConfig } from "./Reel";
 import { logger } from "../../utils/logger";
 import { BetPanel } from "./BetPanel";
 import { InfoPanel } from "./InfoPanel";
+import { GameService } from "../../services/GameService";
 
 const SLOT_SYMBOLS = ["🍒", "🍊", "🍋", "🍇", "7️⃣", "💎"];
-
-// Define win values for each symbol (multiplier of bet)
-const SYMBOL_VALUES: Record<string, number> = {
-  "🍒": 2,    // Cherry - lowest value
-  "🍊": 3,    // Orange
-  "🍋": 4,    // Lemon
-  "🍇": 5,    // Grapes
-  "7️⃣": 10,   // Seven - high value
-  "💎": 20,   // Diamond - highest value
-};
 
 const REEL_COUNT = 3;
 const SPIN_DURATION = 1;
@@ -42,7 +33,7 @@ export class SlotMachine {
     this.container = new Container();
     this.totalHeight = SYMBOL_SIZE * VISIBLE_SYMBOLS + REEL_SPACING * (VISIBLE_SYMBOLS - 1);
     this.infoPanel = new InfoPanel();
-    this.betPanel = new BetPanel(this.infoPanel);
+    this.betPanel = new BetPanel();
     this.initializeSpinButton();
   }
 
@@ -60,7 +51,6 @@ export class SlotMachine {
   }
 
   public resize(width: number, height: number): void {
-    const totalWidth = REEL_COUNT * (SYMBOL_SIZE + REEL_SPACING) - REEL_SPACING;
     this.container.position.set(
       width / 2,
       height / 2
@@ -140,45 +130,43 @@ export class SlotMachine {
     this.isSpinning = true;
     this.spinButton.interactive = false;
 
-    // Check if autowin is enabled in settings
-    if (this.screen.settingsPanel?.isAutowinEnabled()) {
-      this.autowin();
-    } else if (this.screen.settingsPanel?.isAutoloseEnabled()) {
-      this.autolose();
-    }
+    try {
+      const result = await GameService.spin(
+        this.betPanel.getCurrentBet(),
+        this.screen.settingsPanel?.isAutowinEnabled() ?? false,
+        this.screen.settingsPanel?.isAutoloseEnabled() ?? false
+      );
 
+      await this.animateSpin(result.symbols);
+      this.handleSpinResult(result);
+    } catch (error) {
+      logger.error("Failed to spin:", error);
+    } finally {
+      this.isSpinning = false;
+      this.spinButton.interactive = true;
+    }
+  }
+
+  private async animateSpin(symbols: string[]): Promise<void> {
     const spinPromises = this.reels.map((reel, index) => {
       const spinDuration = SPIN_DURATION + index * 0.2;
-      return reel.spin(spinDuration);
+      return reel.spin(spinDuration, symbols[index]);
     });
 
     await Promise.all(spinPromises);
-    this.checkWin();
-    this.isSpinning = false;
-    this.spinButton.interactive = true;
   }
 
-  private checkWin(): void {
-    const middleSymbols = this.reels.map(reel => reel.getMiddleSymbol());
-    const allSame = middleSymbols.every((symbol) => symbol === middleSymbols[0]);
-    
-    if (allSame) {
-      const winSymbol = middleSymbols[0];
-      const winMultiplier = SYMBOL_VALUES[winSymbol];
-      const winAmount = winMultiplier * this.betPanel.getCurrentBet();
-
+  private handleSpinResult(result: { symbols: string[]; winAmount: number; isWin: boolean }): void {
+    if (result.isWin) {
       logger.info("🎉 Winner!", { 
-        symbol: winSymbol,
-        allSymbols: middleSymbols,
-        winAmount: winAmount,
-        multiplier: winMultiplier,
+        symbol: result.symbols[0],
+        allSymbols: result.symbols,
+        winAmount: result.winAmount,
         bet: this.betPanel.getCurrentBet()
       });
-
-      this.infoPanel.updateResult(middleSymbols, winAmount);
-    } else {
-      this.infoPanel.updateResult(middleSymbols, null);
     }
+    
+    this.infoPanel.updateResult(result.symbols, result.winAmount, this.betPanel.getCurrentBet());
   }
 
   public testSymbolVisibility(): boolean {
@@ -193,31 +181,5 @@ export class SlotMachine {
 
   public getReels(): Reel[] {
     return this.reels;
-  }
-
-  /** Set up an autowin by making all reels land on the same symbol */
-  private autowin(): void {
-    // Get a random symbol from the first reel's config
-    const symbols = this.reels[0].getConfig().symbols;
-    const targetSymbol = symbols[Math.floor(Math.random() * symbols.length)];
-    
-    // Set this symbol as the middle symbol for the next spin of all reels
-    this.reels.forEach(reel => {
-      reel.setNextSpinMiddleSymbol(targetSymbol);
-    });
-  }
-
-  /** Set up an autolose by making all reels land on different symbols */
-  private autolose(): void {
-    const symbols = this.reels[0].getConfig().symbols;
-    const usedSymbols = new Set<string>();
-
-    // For each reel, pick a random symbol that hasn't been used yet
-    this.reels.forEach(reel => {
-      let availableSymbols = symbols.filter(s => !usedSymbols.has(s));
-      const randomSymbol = availableSymbols[Math.floor(Math.random() * availableSymbols.length)];
-      usedSymbols.add(randomSymbol);
-      reel.setNextSpinMiddleSymbol(randomSymbol);
-    });
   }
 }

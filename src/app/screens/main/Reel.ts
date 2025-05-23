@@ -89,9 +89,14 @@ export class Reel {
     this.container.position.set(x, y);
   }
 
-  public async spin(duration: number): Promise<void> {
+  public async spin(duration: number, targetSymbol?: string): Promise<void> {
     if (this.isSpinning) return;
     this.isSpinning = true;
+
+    // If a target symbol is provided, set it for the next spin
+    if (targetSymbol) {
+      this.setNextSpinMiddleSymbol(targetSymbol);
+    }
 
     return new Promise<void>((resolve) => {
       const startY = this.stripsY;
