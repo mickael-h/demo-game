@@ -89,41 +89,63 @@ export class Reel {
     this.container.position.set(x, y);
   }
 
-  public async spin(duration: number, targetSymbol?: string): Promise<void> {
-    if (this.isSpinning) return;
-    this.isSpinning = true;
-
-    // If a target symbol is provided, set it for the next spin
-    if (targetSymbol) {
-      this.setNextSpinMiddleSymbol(targetSymbol);
-    }
-
-    return new Promise<void>((resolve) => {
-      const startY = this.stripsY;
-      const spinDistance = this.totalHeight;
-
-      const target = { y: startY };
-      
+  private async animateStripSection(startY: number, spinDistance: number, swapInterval: number): Promise<void> {
+    const target = { y: startY };
+    await new Promise<void>((resolve) => {
       animate(
         target,
         { y: startY - spinDistance },
         {
-          duration,
+          duration: swapInterval,
+          ease: "linear",
           onUpdate: () => {
             this.stripsY = target.y;
           },
           onComplete: () => {
-            requestAnimationFrame(() => {
-              this.swapStrips();
-              this.stripsY = startY;
-              this.isSpinning = false;
-              this.updateStrips();
-              resolve();
-            });
+            this.swapStrips();
+            this.stripsY = startY;
+            resolve();
           },
         }
       );
     });
+  }
+
+  private calculateNumSwaps(duration: number, swapInterval: number, hasTargetSymbol: boolean): number {
+    let numSwaps = Math.floor(duration / swapInterval);
+    
+    if (hasTargetSymbol && numSwaps % 2 === 1) {
+      numSwaps++;
+    }
+    
+    return numSwaps;
+  }
+
+  private resetSpinState(startY: number): void {
+    this.swapStrips();
+    this.stripsY = startY;
+    this.isSpinning = false;
+    this.updateStrips();
+  }
+
+  public async spin(duration: number, targetSymbol?: string): Promise<void> {
+    if (this.isSpinning) return;
+    this.isSpinning = true;
+
+    if (targetSymbol) {
+      this.setNextSpinMiddleSymbol(targetSymbol);
+    }
+
+    const startY = this.stripsY;
+    const spinDistance = this.totalHeight;
+    const swapInterval = 0.2;
+    const numSwaps = this.calculateNumSwaps(duration, swapInterval, !!targetSymbol);
+    
+    for (let i = 0; i < numSwaps; i++) {
+      await this.animateStripSection(startY, spinDistance, swapInterval);
+    }
+
+    this.resetSpinState(startY);
   }
 
   private updateStrips(): void {

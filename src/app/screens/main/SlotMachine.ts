@@ -148,11 +148,15 @@ export class SlotMachine {
   }
 
   private async animateSpin(symbols: string[]): Promise<void> {
+    const REEL_DELAY = 0.5; // Delay between each reel stopping
+    
+    // Start all reels spinning simultaneously
     const spinPromises = this.reels.map((reel, index) => {
-      const spinDuration = SPIN_DURATION + index * 0.2;
+      const spinDuration = SPIN_DURATION + (index * REEL_DELAY);
       return reel.spin(spinDuration, symbols[index]);
     });
 
+    // Wait for all reels to finish
     await Promise.all(spinPromises);
   }
 
