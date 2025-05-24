@@ -8,8 +8,8 @@ import { engine } from "../../getEngine";
 import { PausePopup } from "../../popups/PausePopup";
 import { SettingsPopup } from "../../popups/SettingsPopup";
 
-import { SlotMachine } from "./SlotMachine";
-import { SettingsPanel } from "./SettingsPanel";
+import { SlotMachine } from "../../components/slot/machine";
+import { SettingsPanel, InfoPanel } from "../../components/slot/ui";
 
 /** The screen that holds the app */
 export class MainScreen extends Container {
@@ -21,6 +21,7 @@ export class MainScreen extends Container {
   private settingsButton: FancyButton;
   public settingsPanel: SettingsPanel;
   private slotMachine: SlotMachine;
+  private infoPanel: InfoPanel;
   private paused = false;
 
   constructor() {
@@ -30,7 +31,9 @@ export class MainScreen extends Container {
     this.addChild(this.mainContainer);
     this.slotMachine = new SlotMachine();
     this.settingsPanel = new SettingsPanel();
+    this.infoPanel = new InfoPanel();
     this.addChild(this.settingsPanel);
+    this.addChild(this.infoPanel);
 
     const buttonAnimations = {
       hover: {
@@ -101,6 +104,7 @@ export class MainScreen extends Container {
     this.settingsButton.y = 30;
     this.settingsPanel.resize(width, height);
     this.slotMachine.resize(width, height);
+    this.infoPanel.resize(width, height);
   }
 
   /** Show screen with animations */
@@ -111,6 +115,7 @@ export class MainScreen extends Container {
       this.pauseButton,
       this.settingsButton,
       this.settingsPanel,
+      this.infoPanel,
     ];
 
     let finalPromise!: AnimationPlaybackControls;

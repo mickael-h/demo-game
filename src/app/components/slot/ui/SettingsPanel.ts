@@ -1,5 +1,5 @@
 import { Container, Graphics } from "pixi.js";
-import { LabeledCheckbox } from "./LabeledCheckbox";
+import { LabeledCheckbox } from "../../common/LabeledCheckbox";
 
 export class SettingsPanel extends Container {
   private panel: Graphics;

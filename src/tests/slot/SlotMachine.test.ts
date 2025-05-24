@@ -1,6 +1,6 @@
 import { describe, expect, test } from '@jest/globals';
-import { SlotMachine } from "./SlotMachine";
-import { MainScreen } from "./MainScreen";
+import { SlotMachine } from "../../app/components/slot/machine/SlotMachine";
+import { MainScreen } from "../../app/screens/main/MainScreen";
 
 // Mock PixiJS
 jest.mock('pixi.js', () => {
@@ -36,16 +36,18 @@ jest.mock('pixi.js', () => {
 });
 
 // Mock MainScreen
-jest.mock('./MainScreen', () => ({
+jest.mock('../../app/screens/main/MainScreen', () => ({
   MainScreen: jest.fn().mockImplementation(() => ({
     mainContainer: {
       addChild: jest.fn()
-    }
+    },
+    width: 800,
+    height: 600
   }))
 }));
 
 // Mock Reel
-jest.mock('./Reel', () => ({
+jest.mock('../../app/components/slot/Reel', () => ({
   Reel: jest.fn().mockImplementation(() => ({
     getContainer: jest.fn().mockReturnValue({}),
     setPosition: jest.fn(),
@@ -56,6 +58,24 @@ jest.mock('./Reel', () => ({
       symbols: ['🍒', '🍊', '🍋', '🍇', '7️⃣', '💎']
     }),
     setNextSpinMiddleSymbol: jest.fn()
+  }))
+}));
+
+// Mock InfoPanel
+jest.mock('../../app/components/slot/InfoPanel', () => ({
+  InfoPanel: jest.fn().mockImplementation(() => ({
+    resize: jest.fn(),
+    updateResult: jest.fn()
+  }))
+}));
+
+// Mock BetPanel
+jest.mock('../../app/components/slot/BetPanel', () => ({
+  BetPanel: jest.fn().mockImplementation(() => ({
+    getContainer: jest.fn().mockReturnValue({}),
+    getCurrentBet: jest.fn().mockReturnValue(1),
+    setPosition: jest.fn(),
+    getTotalHeight: jest.fn().mockReturnValue(100)
   }))
 }));
 

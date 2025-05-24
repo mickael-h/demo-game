@@ -1,4 +1,4 @@
-import { Reel, ReelConfig } from './Reel';
+import { Reel, ReelConfig } from '../../app/components/slot/machine/Reel';
 import { animate } from 'motion';
 
 // Mock PixiJS

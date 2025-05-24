@@ -1,4 +1,5 @@
 import { Container, Graphics, Text } from "pixi.js";
+import { GameService } from "../../../services/GameService";
 
 const PANEL_CONFIG = {
   WIDTH: 350,
@@ -37,12 +38,18 @@ export class InfoPanel extends Container {
     });
     this.resultText.position.set(PANEL_CONFIG.PADDING, PANEL_CONFIG.PADDING);
     this.addChild(this.resultText);
+
+    // Subscribe to GameService events
+    GameService.addEventListener(GameService.SPIN_RESULT_EVENT, ((event: CustomEvent) => {
+      const result = event.detail;
+      this.updateResult(result.symbols, result.winAmount, result.betAmount);
+    }) as EventListener);
   }
 
   public resize(_width: number, height: number): void {
     this.x = 20; // 20px margin from left edge
     this.y = 80; // Below the settings button
-    this.panel.height = height - 80;
+    this.panel.height = height - 160;
   }
 
   public updateResult(symbols: string[], winAmount: number, betAmount: number): void {

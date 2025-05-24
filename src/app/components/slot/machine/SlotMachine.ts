@@ -1,12 +1,9 @@
 import { Container, Graphics, Text } from "pixi.js";
-import type { MainScreen } from "./MainScreen";
+import type { MainScreen } from "../../../screens/main/MainScreen";
 import { Reel, ReelConfig } from "./Reel";
-import { logger } from "../../utils/logger";
-import { BetPanel } from "./BetPanel";
-import { InfoPanel } from "./InfoPanel";
-import { GameService } from "../../services/GameService";
-
-const SLOT_SYMBOLS = ["🍒", "🍊", "🍋", "🍇", "7️⃣", "💎"];
+import { logger } from "../../../utils/logger";
+import { BetPanel } from "../ui/BetPanel";
+import { GameService } from "../../../services/GameService";
 
 const REEL_COUNT = 3;
 const SPIN_DURATION = 1;
@@ -27,12 +24,10 @@ export class SlotMachine {
   private container: Container;
   private totalHeight: number;
   private betPanel: BetPanel;
-  private infoPanel: InfoPanel;
 
   constructor() {
     this.container = new Container();
     this.totalHeight = SYMBOL_SIZE * VISIBLE_SYMBOLS + REEL_SPACING * (VISIBLE_SYMBOLS - 1);
-    this.infoPanel = new InfoPanel();
     this.betPanel = new BetPanel();
     this.initializeSpinButton();
   }
@@ -40,13 +35,11 @@ export class SlotMachine {
   public async show(screen: MainScreen): Promise<void> {
     this.screen = screen;
     this.screen.mainContainer.addChild(this.container);
-    this.screen.mainContainer.addChild(this.infoPanel);
     this.initializeReels();
     this.container.addChild(this.spinButton);
     this.container.addChild(this.betPanel.getContainer());
     this.positionSpinButton();
     this.positionBetPanel();
-    this.infoPanel.resize(screen.width, screen.height);
     this.resize(screen.width, screen.height);
   }
 
@@ -105,7 +98,7 @@ export class SlotMachine {
       symbolSize: SYMBOL_SIZE,
       reelSpacing: REEL_SPACING,
       visibleSymbols: VISIBLE_SYMBOLS,
-      symbols: SLOT_SYMBOLS
+      symbols: ["🍒", "🍊", "🍋", "🍇", "7️⃣", "💎"] // Using symbols directly since GameService no longer provides them
     };
 
     for (let i = 0; i < REEL_COUNT; i++) {
@@ -138,7 +131,6 @@ export class SlotMachine {
       );
 
       await this.animateSpin(result.symbols);
-      this.handleSpinResult(result);
     } catch (error) {
       logger.error("Failed to spin:", error);
     } finally {
@@ -158,19 +150,6 @@ export class SlotMachine {
 
     // Wait for all reels to finish
     await Promise.all(spinPromises);
-  }
-
-  private handleSpinResult(result: { symbols: string[]; winAmount: number; isWin: boolean }): void {
-    if (result.isWin) {
-      logger.info("🎉 Winner!", { 
-        symbol: result.symbols[0],
-        allSymbols: result.symbols,
-        winAmount: result.winAmount,
-        bet: this.betPanel.getCurrentBet()
-      });
-    }
-    
-    this.infoPanel.updateResult(result.symbols, result.winAmount, this.betPanel.getCurrentBet());
   }
 
   public testSymbolVisibility(): boolean {
