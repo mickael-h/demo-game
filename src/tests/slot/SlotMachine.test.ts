@@ -47,7 +47,7 @@ jest.mock('../../app/screens/main/MainScreen', () => ({
 }));
 
 // Mock Reel
-jest.mock('../../app/components/slot/Reel', () => ({
+jest.mock('../../app/components/slot/machine/Reel', () => ({
   Reel: jest.fn().mockImplementation(() => ({
     getContainer: jest.fn().mockReturnValue({}),
     setPosition: jest.fn(),
@@ -62,7 +62,7 @@ jest.mock('../../app/components/slot/Reel', () => ({
 }));
 
 // Mock InfoPanel
-jest.mock('../../app/components/slot/InfoPanel', () => ({
+jest.mock('../../app/components/slot/ui/InfoPanel', () => ({
   InfoPanel: jest.fn().mockImplementation(() => ({
     resize: jest.fn(),
     updateResult: jest.fn()
@@ -70,7 +70,7 @@ jest.mock('../../app/components/slot/InfoPanel', () => ({
 }));
 
 // Mock BetPanel
-jest.mock('../../app/components/slot/BetPanel', () => ({
+jest.mock('../../app/components/slot/ui/BetPanel', () => ({
   BetPanel: jest.fn().mockImplementation(() => ({
     getContainer: jest.fn().mockReturnValue({}),
     getCurrentBet: jest.fn().mockReturnValue(1),
