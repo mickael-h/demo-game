@@ -10,7 +10,8 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json}\"",
     "dev": "vite",
-    "test": "jest"
+    "test": "jest",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@esotericsoftware/spine-pixi-v8": "^4.2.74",
