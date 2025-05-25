@@ -2,6 +2,16 @@ import { describe, expect, test } from '@jest/globals';
 import { SlotMachine } from "../../app/components/slot/machine/SlotMachine";
 import { MainScreen } from "../../app/screens/main/MainScreen";
 
+// Mock logger
+jest.mock('@utils/logger', () => ({
+  logger: {
+    error: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    debug: jest.fn()
+  }
+}));
+
 // Mock PixiJS
 jest.mock('pixi.js', () => {
   const mockContainer = {

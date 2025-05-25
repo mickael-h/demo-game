@@ -1,12 +1,5 @@
 import { storage } from "@engine/utils/storage";
-
-// Keys for saved items in storage
-const KEY_MANY_SPINS = "slot-many-spins";
-const KEY_THREE_OF_A_KIND_WEIGHT = "slot-three-of-a-kind-weight";
-const KEY_TWO_OF_A_KIND_WEIGHT = "slot-two-of-a-kind-weight";
-const KEY_NO_WIN_WEIGHT = "slot-no-win-weight";
-const KEY_AUTOWIN = "slot-autowin";
-const KEY_AUTOLOSE = "slot-autolose";
+import { STORAGE_KEYS } from "@app/types";
 
 /**
  * Persistent slot machine settings.
@@ -14,62 +7,81 @@ const KEY_AUTOLOSE = "slot-autolose";
 class SlotSettings {
   /** Get many spins amount */
   public getManySpinsAmount() {
-    return storage.getNumber(KEY_MANY_SPINS) ?? 10000;
+    return storage.getNumber(STORAGE_KEYS.SLOT.MANY_SPINS) ?? 10000;
   }
 
   /** Set many spins amount */
   public setManySpinsAmount(value: number) {
-    storage.setNumber(KEY_MANY_SPINS, value);
+    storage.setNumber(STORAGE_KEYS.SLOT.MANY_SPINS, value);
   }
 
   /** Get three of a kind weight */
   public getThreeOfAKindWeight() {
-    return storage.getNumber(KEY_THREE_OF_A_KIND_WEIGHT) ?? 100;
+    return storage.getNumber(STORAGE_KEYS.SLOT.THREE_OF_A_KIND_WEIGHT) ?? 100;
   }
 
   /** Set three of a kind weight */
   public setThreeOfAKindWeight(value: number) {
-    storage.setNumber(KEY_THREE_OF_A_KIND_WEIGHT, value);
+    storage.setNumber(STORAGE_KEYS.SLOT.THREE_OF_A_KIND_WEIGHT, value);
   }
 
   /** Get two of a kind weight */
   public getTwoOfAKindWeight() {
-    return storage.getNumber(KEY_TWO_OF_A_KIND_WEIGHT) ?? 100;
+    return storage.getNumber(STORAGE_KEYS.SLOT.TWO_OF_A_KIND_WEIGHT) ?? 100;
   }
 
   /** Set two of a kind weight */
   public setTwoOfAKindWeight(value: number) {
-    storage.setNumber(KEY_TWO_OF_A_KIND_WEIGHT, value);
+    storage.setNumber(STORAGE_KEYS.SLOT.TWO_OF_A_KIND_WEIGHT, value);
   }
 
   /** Get no win weight */
   public getNoWinWeight() {
-    return storage.getNumber(KEY_NO_WIN_WEIGHT) ?? 100;
+    return storage.getNumber(STORAGE_KEYS.SLOT.NO_WIN_WEIGHT) ?? 100;
   }
 
   /** Set no win weight */
   public setNoWinWeight(value: number) {
-    storage.setNumber(KEY_NO_WIN_WEIGHT, value);
+    storage.setNumber(STORAGE_KEYS.SLOT.NO_WIN_WEIGHT, value);
   }
 
   /** Get autowin setting */
   public getAutowin() {
-    return storage.getBool(KEY_AUTOWIN) ?? false;
+    return storage.getBool(STORAGE_KEYS.SLOT.AUTOWIN) ?? false;
   }
 
   /** Set autowin setting */
   public setAutowin(value: boolean) {
-    storage.setBool(KEY_AUTOWIN, value);
+    storage.setBool(STORAGE_KEYS.SLOT.AUTOWIN, value);
   }
 
   /** Get autolose setting */
   public getAutolose() {
-    return storage.getBool(KEY_AUTOLOSE) ?? false;
+    return storage.getBool(STORAGE_KEYS.SLOT.AUTOLOSE) ?? false;
   }
 
   /** Set autolose setting */
   public setAutolose(value: boolean) {
-    storage.setBool(KEY_AUTOLOSE, value);
+    storage.setBool(STORAGE_KEYS.SLOT.AUTOLOSE, value);
+  }
+
+  /** Get symbol weight */
+  public getSymbolWeight(symbolIndex: number) {
+    return storage.getNumber(`${STORAGE_KEYS.SLOT.SYMBOL_WEIGHT_PREFIX}${symbolIndex}`) ?? 100;
+  }
+
+  /** Set symbol weight */
+  public setSymbolWeight(symbolIndex: number, value: number) {
+    storage.setNumber(`${STORAGE_KEYS.SLOT.SYMBOL_WEIGHT_PREFIX}${symbolIndex}`, value);
+  }
+
+  /** Get all symbol weights */
+  public getSymbolWeights() {
+    const weights: { [key: number]: number } = {};
+    for (let i = 0; i < 6; i++) { // Assuming 6 symbols
+      weights[i] = this.getSymbolWeight(i);
+    }
+    return weights;
   }
 }
 

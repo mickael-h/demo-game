@@ -1,44 +1,24 @@
 import { EventDispatcher } from "../utils/EventDispatcher";
-import type { OutcomeWeights } from "../components/slot/ui/SettingsPanel";
-
-const SLOT_SYMBOLS = ["🍒", "🍊", "🍋", "🍇", "7️⃣", "💎"];
-
-export interface SpinResult {
-  symbols: string[];
-  win: number;
-  winType: "THREE_OF_A_KIND" | "TWO_OF_A_KIND" | "NO_WIN";
-}
-
-export interface ManySpinsResult {
-  totalSpins: number;
-  totalWinAmount: number;
-  totalBetAmount: number;
-  expectation: number;
-  winRate: number;
-  returnToPlayer: number;
-}
-
-export interface BetOptions {
-  autowin?: boolean;
-  autolose?: boolean;
-  outcomeWeights?: OutcomeWeights;
-}
+import { SLOT_SYMBOLS, SpinResult, ManySpinsResult, BetOptions, BetRequest } from "@app/types";
 
 export class GameService {
   private static readonly API_BASE_URL = "http://localhost:3000";
 
   public static async spin(bet: number, options: BetOptions = {}): Promise<SpinResult> {
+    const request: BetRequest = {
+      amount: bet,
+      autowin: options.autowin,
+      autolose: options.autolose,
+      outcomeWeights: options.outcomeWeights,
+      symbolWeights: options.symbolWeights
+    };
+
     const response = await fetch(`${this.API_BASE_URL}/api/bet/place`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        amount: bet,
-        autowin: options.autowin,
-        autolose: options.autolose,
-        outcomeWeights: options.outcomeWeights
-      }),
+      body: JSON.stringify(request),
     });
 
     if (!response.ok) {
@@ -56,6 +36,14 @@ export class GameService {
   }
 
   public static async manySpins(spins: number, bet: number, options: BetOptions = {}): Promise<ManySpinsResult> {
+    const request: BetRequest = {
+      amount: bet,
+      autowin: options.autowin,
+      autolose: options.autolose,
+      outcomeWeights: options.outcomeWeights,
+      symbolWeights: options.symbolWeights
+    };
+
     const response = await fetch(`${this.API_BASE_URL}/api/bet/many-spins`, {
       method: "POST",
       headers: {
@@ -63,10 +51,7 @@ export class GameService {
       },
       body: JSON.stringify({
         spins,
-        amount: bet,
-        autowin: options.autowin,
-        autolose: options.autolose,
-        outcomeWeights: options.outcomeWeights
+        ...request
       }),
     });
 

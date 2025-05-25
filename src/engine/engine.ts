@@ -1,4 +1,3 @@
-import { sound } from "@pixi/sound";
 import type {
   ApplicationOptions,
   DestroyOptions,
@@ -44,7 +43,7 @@ export class CreationEngine extends Application {
     // Append the application canvas to the document body
     document.getElementById("pixi-container")!.appendChild(this.canvas);
     // Add a visibility listener, so the app can pause sounds and screens
-    document.addEventListener("visibilitychange", this.visibilityChange);
+    document.addEventListener("visibilitychange", this.handleVisibilityChange.bind(this));
 
     // Init PixiJS assets with this asset manifest
     await Assets.init({ manifest, basePath: "assets" });
@@ -60,18 +59,16 @@ export class CreationEngine extends Application {
     rendererDestroyOptions: RendererDestroyOptions = false,
     options: DestroyOptions = false,
   ): void {
-    document.removeEventListener("visibilitychange", this.visibilityChange);
+    document.removeEventListener("visibilitychange", this.handleVisibilityChange);
     super.destroy(rendererDestroyOptions, options);
   }
 
-  /** Fire when document visibility changes - lose or regain focus */
-  protected visibilityChange = () => {
+  /** Handle visibility change */
+  private handleVisibilityChange() {
     if (document.hidden) {
-      sound.pauseAll();
-      this.navigation.blur();
+      this.audio.bgm.pause();
     } else {
-      sound.resumeAll();
-      this.navigation.focus();
+      this.audio.bgm.resume();
     }
-  };
+  }
 }

@@ -2,48 +2,7 @@ import { Container, Graphics, Text } from "pixi.js";
 import { LabeledCheckbox } from "@components/common/LabeledCheckbox";
 import { TextInput } from "@components/common/TextInput";
 import { slotSettings } from "@utils/slotSettings";
-
-const PANEL_CONFIG = {
-  WIDTH: 300,
-  PADDING: 20,
-  COLORS: {
-    BACKGROUND: 0x333333,
-    TEXT: 0xFFFFFF,
-    INPUT_BACKGROUND: 0x444444,
-    INPUT_TEXT: 0xFFFFFF
-  },
-  TEXT: {
-    FONT_FAMILY: "Arial",
-    FONT_SIZE: 16,
-    LINE_HEIGHT: 24,
-    STYLE: {
-      fontFamily: "Arial",
-      fontSize: 16,
-      fill: 0xFFFFFF
-    }
-  },
-  INPUT: {
-    WIDTH: 100,
-    HEIGHT: 30,
-    COLORS: {
-      background: 0x444444,
-      text: 0xFFFFFF,
-      border: 0xFFFFFF
-    },
-    TEXT_STYLE: {
-      fontFamily: "Arial",
-      fontSize: 16
-    }
-  }
-};
-
-const SLOT_SYMBOLS = ["🍒", "🍊", "🍋", "🍇", "7️⃣", "💎"];
-
-export interface OutcomeWeights {
-  threeOfAKind: number;
-  twoOfAKind: number;
-  noWin: number;
-}
+import { PANEL_CONFIG, SLOT_SYMBOLS, OutcomeWeights, BetOptions } from "@app/types";
 
 export class SettingsPanel extends Container {
   private panel!: Graphics;
@@ -60,6 +19,7 @@ export class SettingsPanel extends Container {
   private noWinLabel!: Text;
   private noWinInput!: TextInput;
   private noWinProbLabel!: Text;
+  private symbolWeightInputs: TextInput[] = [];
 
   constructor() {
     super();
@@ -225,6 +185,45 @@ export class SettingsPanel extends Container {
     });
     this.noWinProbLabel.position.set(PANEL_CONFIG.PADDING + 110, weightsY + labelSpacing * 4 + PANEL_CONFIG.TEXT.LINE_HEIGHT + 5);
 
+    // Add symbol weights section
+    const symbolWeightsY = weightsY + labelSpacing * 6;
+    const symbolWeightLabel = new Text({
+      text: "Symbol Weights (% of default):",
+      style: PANEL_CONFIG.TEXT.STYLE
+    });
+    symbolWeightLabel.position.set(PANEL_CONFIG.PADDING, symbolWeightsY);
+    this.addChild(symbolWeightLabel);
+
+    // Create inputs for each symbol
+    SLOT_SYMBOLS.forEach((symbol, index) => {
+      const y = symbolWeightsY + PANEL_CONFIG.TEXT.LINE_HEIGHT * (index + 1);
+      
+      const symbolLabel = new Text({
+        text: `${symbol}:`,
+        style: PANEL_CONFIG.TEXT.STYLE
+      });
+      symbolLabel.position.set(PANEL_CONFIG.PADDING, y);
+      this.addChild(symbolLabel);
+
+      const input = new TextInput({
+        width: PANEL_CONFIG.INPUT.WIDTH,
+        height: PANEL_CONFIG.INPUT.HEIGHT,
+        initialValue: slotSettings.getSymbolWeight(index),
+        min: 0,
+        max: 100,
+        colors: PANEL_CONFIG.INPUT.COLORS,
+        textStyle: PANEL_CONFIG.INPUT.TEXT_STYLE
+      });
+      input.position.set(PANEL_CONFIG.PADDING + 40, y);
+      this.addChild(input);
+
+      input.onChange(() => {
+        slotSettings.setSymbolWeight(index, Number(input.getValue()));
+      });
+
+      this.symbolWeightInputs[index] = input;
+    });
+
     // Add all elements to panel
     this.addChild(this.autowinCheckbox);
     this.addChild(this.autoloseCheckbox);
@@ -284,6 +283,23 @@ export class SettingsPanel extends Container {
       threeOfAKind: Number(this.threeOfAKindInput.getValue()) / 100,
       twoOfAKind: Number(this.twoOfAKindInput.getValue()) / 100,
       noWin: Number(this.noWinInput.getValue()) / 100
+    };
+  }
+
+  public getSymbolWeights(): { [key: number]: number } {
+    const weights = slotSettings.getSymbolWeights();
+    // Convert percentages to decimal values
+    return Object.fromEntries(
+      Object.entries(weights).map(([index, weight]) => [index, weight / 100])
+    );
+  }
+
+  public getSettings(): BetOptions {
+    return {
+      autowin: this.isAutowinEnabled(),
+      autolose: this.isAutoloseEnabled(),
+      outcomeWeights: this.getOutcomeWeights(),
+      symbolWeights: this.getSymbolWeights()
     };
   }
 } 

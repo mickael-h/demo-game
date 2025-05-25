@@ -155,11 +155,7 @@ export class SlotMachine {
     try {
       const result = await GameService.spin(
         this.betPanel.getCurrentBet(),
-        {
-          autowin: this.screen.settingsPanel?.isAutowinEnabled() ?? false,
-          autolose: this.screen.settingsPanel?.isAutoloseEnabled() ?? false,
-          outcomeWeights: this.screen.settingsPanel?.getOutcomeWeights()
-        }
+        this.screen.settingsPanel?.getSettings()
       );
 
       await this.animateSpin(result.symbols);
@@ -182,11 +178,7 @@ export class SlotMachine {
       await GameService.manySpins(
         this.screen.settingsPanel?.getManySpinsAmount() ?? 1000,
         this.betPanel.getCurrentBet(),
-        {
-          autowin: this.screen.settingsPanel?.isAutowinEnabled() ?? false,
-          autolose: this.screen.settingsPanel?.isAutoloseEnabled() ?? false,
-          outcomeWeights: this.screen.settingsPanel?.getOutcomeWeights()
-        }
+        this.screen.settingsPanel?.getSettings()
       );
     } catch (error) {
       logger.error("Failed to perform many spins:", error);

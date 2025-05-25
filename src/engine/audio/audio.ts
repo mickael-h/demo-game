@@ -14,20 +14,21 @@ export class BGM {
   public current?: Sound;
   /** Current volume set */
   private volume = 1;
+  /** Whether the music is paused */
+  private isPaused = false;
 
   /** Play a background music, fading out and stopping the previous, if there is one */
   public async play(alias: string, options?: PlayOptions) {
     // Do nothing if the requested music is already being played
-    if (this.currentAlias === alias) return;
+    if (this.currentAlias === alias && !this.isPaused) return;
 
     // Fade out then stop current music
     if (this.current) {
       const current = this.current;
-      animate(current, { volume: 0 }, { duration: 1, ease: "linear" }).then(
-        () => {
-          current.stop();
-        },
-      );
+      await animate(current, { volume: 0 }, { duration: 1, ease: "linear" });
+      current.stop();
+      this.current = undefined;
+      this.currentAlias = undefined;
     }
 
     // Find out the new instance to be played
@@ -37,11 +38,28 @@ export class BGM {
     this.currentAlias = alias;
     this.current.play({ loop: true, ...options });
     this.current.volume = 0;
-    animate(
+    await animate(
       this.current,
       { volume: this.volume },
       { duration: 1, ease: "linear" },
     );
+    this.isPaused = false;
+  }
+
+  /** Pause the current music */
+  public pause() {
+    if (this.current && !this.isPaused) {
+      this.current.pause();
+      this.isPaused = true;
+    }
+  }
+
+  /** Resume the current music */
+  public resume() {
+    if (this.current && this.isPaused) {
+      this.current.resume();
+      this.isPaused = false;
+    }
   }
 
   /** Get background music volume */
