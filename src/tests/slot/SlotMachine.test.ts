@@ -20,6 +20,7 @@ jest.mock('pixi.js', () => {
       rect: jest.fn().mockReturnThis(),
       fill: jest.fn().mockReturnThis(),
       roundRect: jest.fn().mockReturnThis(),
+      stroke: jest.fn().mockReturnThis(),
       interactive: true,
       cursor: "pointer",
       on: jest.fn(),
@@ -76,6 +77,18 @@ jest.mock('../../app/components/slot/ui/BetPanel', () => ({
     getCurrentBet: jest.fn().mockReturnValue(1),
     setPosition: jest.fn(),
     getTotalHeight: jest.fn().mockReturnValue(100)
+  }))
+}));
+
+// Mock TextButton
+jest.mock('../../app/components/common/TextButton', () => ({
+  TextButton: jest.fn().mockImplementation(() => ({
+    onPress: jest.fn(),
+    setPosition: jest.fn(),
+    addChild: jest.fn(),
+    setEnabled: jest.fn(),
+    position: { set: jest.fn() },
+    // Add any other methods/properties used in SlotMachine
   }))
 }));
 
