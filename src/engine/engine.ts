@@ -11,6 +11,21 @@ import { CreationNavigationPlugin } from "./navigation/NavigationPlugin";
 import { CreationResizePlugin } from "./resize/ResizePlugin";
 import { getResolution } from "./utils/getResolution";
 
+interface BundleItem {
+  name: string;
+  assets: Array<{
+    alias: string[];
+    src: string[];
+    data?: {
+      tags?: Record<string, boolean>;
+    };
+  }>;
+}
+
+interface AssetManifest {
+  bundles: BundleItem[];
+}
+
 extensions.remove(ResizePlugin);
 extensions.add(CreationResizePlugin);
 extensions.add(CreationAudioPlugin);
@@ -30,7 +45,7 @@ extensions.add(CreationNavigationPlugin);
  */
 export class CreationEngine extends Application {
   /** Initialize the application */
-  public async init(opts: Partial<ApplicationOptions>): Promise<void> {
+  public override async init(opts: Partial<ApplicationOptions>): Promise<void> {
     opts.resizeTo ??= window;
     opts.resolution ??= getResolution();
 
@@ -42,11 +57,11 @@ export class CreationEngine extends Application {
     document.addEventListener("visibilitychange", this.handleVisibilityChange.bind(this));
 
     // Init PixiJS assets with this asset manifest
-    await Assets.init({ manifest, basePath: "assets" });
+    await Assets.init({ manifest: manifest as AssetManifest, basePath: "assets" });
     await Assets.loadBundle("preload");
 
     // List all existing bundles names
-    const allBundles = manifest.bundles.map((item) => item.name);
+    const allBundles = (manifest as AssetManifest).bundles.map((item: BundleItem) => item.name);
     // Start up background loading of all bundles
     Assets.backgroundLoadBundle(allBundles);
   }
