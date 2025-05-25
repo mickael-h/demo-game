@@ -195,6 +195,7 @@ describe("SlotMachine", () => {
       expectation: 5,
       winRate: 50,
       returnToPlayer: 500,
+      standardDeviation: 2.5,
     };
     (GameService.manySpins as jest.Mock).mockResolvedValueOnce(mockResult);
 
