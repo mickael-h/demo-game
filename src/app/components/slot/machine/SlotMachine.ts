@@ -1,4 +1,4 @@
-import { Container, Graphics } from "pixi.js";
+import { Container, Graphics, Text } from "pixi.js";
 import type { MainScreen } from "@screens/main/MainScreen";
 import { Reel, ReelConfig } from "./Reel";
 import { logger } from "@utils/logger";
@@ -27,6 +27,8 @@ export class SlotMachine {
   private totalHeight: number;
   private betPanel: BetPanel;
   private middleRowHighlight: Graphics = new Graphics();
+  private payoutLabels: Text[] = [];
+  private symbolMultiplierLabels: Text[] = [];
 
   constructor() {
     this.container = new Container();
@@ -58,14 +60,31 @@ export class SlotMachine {
     this.container.addChild(this.betPanel);
     this.positionSpinButtons();
     this.positionBetPanel();
+    this.createPayoutLabels();
+    this.createSymbolMultiplierLabels();
     this.resize(screen.width, screen.height);
   }
 
   public resize(width: number, height: number): void {
-    this.container.position.set(
-      width / 2,
-      height / 2
-    );
+    // Position the container in the center of the screen
+    this.container.position.set(width / 2, height / 2);
+
+    // Update payout label position
+    if (this.payoutLabels.length > 0) {
+      this.payoutLabels[0].position.set(0, -220);
+    }
+
+    // Update symbol multiplier labels position
+    const startX = -220;
+    const startY = -120;
+    const spacing = 40;
+    this.symbolMultiplierLabels.forEach((label, index) => {
+      label.position.set(startX, startY + index * spacing);
+    });
+
+    // Position other elements
+    this.positionSpinButtons();
+    this.positionBetPanel();
   }
 
   private positionBetPanel(): void {
@@ -214,5 +233,47 @@ export class SlotMachine {
 
   public getReels(): Reel[] {
     return this.reels;
+  }
+
+  private createPayoutLabels(): void {
+    const topLabel = new Text({
+      text: "Payouts:\n3 of a kind = 100%\n2 of a kind = 20%",
+      style: {
+        fontFamily: 'Arial',
+        fontSize: 16,
+        fill: 0xFFFFFF,
+        align: 'center',
+        lineHeight: 20
+      }
+    });
+    topLabel.anchor.set(0.5, 0);
+    topLabel.position.set(0, -220); // Fixed pixel value
+    this.container.addChild(topLabel);
+    this.payoutLabels.push(topLabel);
+  }
+
+  private createSymbolMultiplierLabels(): void {
+    const multipliers = [
+      { symbol: "🍒", multiplier: "x2" },
+      { symbol: "🍊", multiplier: "x3" },
+      { symbol: "🍋", multiplier: "x4" },
+      { symbol: "🍇", multiplier: "x5" },
+      { symbol: "7️⃣", multiplier: "x10" },
+      { symbol: "💎", multiplier: "x20" }
+    ];
+
+    multipliers.forEach((item) => {
+      const label = new Text({
+        text: `${item.symbol} ${item.multiplier}`,
+        style: {
+          fontFamily: 'Arial',
+          fontSize: 14,
+          fill: 0xFFFFFF,
+          align: 'left'
+        }
+      });
+      this.container.addChild(label);
+      this.symbolMultiplierLabels.push(label);
+    });
   }
 }

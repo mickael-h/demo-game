@@ -1,4 +1,5 @@
 import { Container, Graphics, Text } from "pixi.js";
+import { engine } from "@app/getEngine";
 
 export interface TextButtonConfig {
   text: string;
@@ -38,6 +39,18 @@ export class TextButton extends Container {
     this.text.anchor.set(0.5);
     this.text.position.set(config.width / 2, config.height / 2);
     this.button.addChild(this.text);
+
+    // Add hover and click handlers
+    this.button.on("pointerover", this.handleHover.bind(this));
+    this.button.on("pointerdown", this.handleClick.bind(this));
+  }
+
+  private handleHover() {
+    engine().audio.sfx.play("main/sounds/sfx-hover.wav");
+  }
+
+  private handleClick() {
+    engine().audio.sfx.play("main/sounds/sfx-press.wav");
   }
 
   public setPosition(x: number, y: number): void {

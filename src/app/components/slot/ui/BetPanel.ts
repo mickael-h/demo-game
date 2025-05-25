@@ -1,4 +1,5 @@
 import { Container, Graphics, Text } from "pixi.js";
+import { engine } from "@app/getEngine";
 
 const BET_AMOUNTS = [100, 50, 25, 10, 5, 1];
 
@@ -8,13 +9,15 @@ const BET_BUTTON = {
   SPACING: 10,
   COLORS: {
     DEFAULT: 0x4CAF50,
-    SELECTED: 0x2196F3,
-    TEXT: 0xFFFFFF
+    SELECTED: 0x4CAF50,
+    TEXT: 0xFFFFFF,
+    OUTLINE: 0xFFFFFF
   },
   TEXT: {
     FONT_FAMILY: "Arial",
     FONT_SIZE: 16
-  }
+  },
+  RADIUS: 20
 };
 
 export class BetPanel extends Container {
@@ -48,8 +51,14 @@ export class BetPanel extends Container {
   private drawBetButton(button: Graphics, amount: number, yPosition: number): void {
     const isSelected = amount === this.currentBet;
     button.clear();
-    button.roundRect(0, yPosition, BET_BUTTON.SIZE, BET_BUTTON.SIZE, 5)
-      .fill(isSelected ? BET_BUTTON.COLORS.SELECTED : BET_BUTTON.COLORS.DEFAULT);
+    
+    button.circle(BET_BUTTON.SIZE / 2, yPosition + BET_BUTTON.SIZE / 2, BET_BUTTON.SIZE / 2)
+      .fill(BET_BUTTON.COLORS.DEFAULT);
+    
+    if (isSelected) {
+      button.circle(BET_BUTTON.SIZE / 2, yPosition + BET_BUTTON.SIZE / 2, BET_BUTTON.SIZE / 2)
+        .stroke({ width: 4, color: BET_BUTTON.COLORS.OUTLINE });
+    }
   }
 
   private addBetButtonText(button: Graphics, amount: number, yPosition: number): void {
@@ -69,7 +78,13 @@ export class BetPanel extends Container {
   private makeBetButtonInteractive(button: Graphics, amount: number): void {
     button.eventMode = 'static';
     button.cursor = 'pointer';
+    
+    button.on('pointerover', () => {
+      engine().audio.sfx.play("main/sounds/sfx-hover.wav");
+    });
+    
     button.on('pointerdown', () => {
+      engine().audio.sfx.play("main/sounds/sfx-press.wav");
       this.currentBet = amount;
       this.updateBetButtonColors();
     });
