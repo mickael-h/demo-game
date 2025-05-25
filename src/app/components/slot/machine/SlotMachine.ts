@@ -1,10 +1,10 @@
 import { Container, Graphics } from "pixi.js";
-import type { MainScreen } from "../../../screens/main/MainScreen";
+import type { MainScreen } from "@screens/main/MainScreen";
 import { Reel, ReelConfig } from "./Reel";
-import { logger } from "../../../utils/logger";
-import { BetPanel } from "../ui/BetPanel";
-import { GameService } from "../../../services/GameService";
-import { TextButton } from "../../common/TextButton";
+import { logger } from "@utils/logger";
+import { BetPanel } from "@components/slot/ui/BetPanel";
+import { GameService } from "@app/services/GameService";
+import { TextButton } from "@components/common/TextButton";
 
 const REEL_COUNT = 3;
 const SPIN_DURATION = 1;

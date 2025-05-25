@@ -1,5 +1,5 @@
-import { storage } from "../../engine/utils/storage";
-import { engine } from "../getEngine";
+import { storage } from "@engine/utils/storage";
+import { engine } from "@app/getEngine";
 
 // Keys for saved items in storage
 const KEY_VOLUME_MASTER = "volume-master";

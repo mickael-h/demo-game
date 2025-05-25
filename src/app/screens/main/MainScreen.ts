@@ -4,12 +4,12 @@ import type { AnimationPlaybackControls } from "motion/react";
 import type { Ticker } from "pixi.js";
 import { Container } from "pixi.js";
 
-import { engine } from "../../getEngine";
-import { PausePopup } from "../../popups/PausePopup";
-import { SettingsPopup } from "../../popups/SettingsPopup";
+import { engine } from "@app/getEngine";
+import { PausePopup } from "@popups/PausePopup";
+import { SettingsPopup } from "@popups/SettingsPopup";
 
-import { SlotMachine } from "../../components/slot/machine";
-import { SettingsPanel, InfoPanel } from "../../components/slot/ui";
+import { SlotMachine } from "@components/slot/machine";
+import { SettingsPanel, InfoPanel } from "@components/slot/ui";
 
 /** The screen that holds the app */
 export class MainScreen extends Container {

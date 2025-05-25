@@ -1,6 +1,6 @@
 import { Container, Graphics, Text } from "pixi.js";
-import { EventDispatcher } from "../../../utils/EventDispatcher";
-import type { SpinResult, ManySpinsResult } from "../../../services/GameService";
+import { EventDispatcher } from "@utils/EventDispatcher";
+import type { SpinResult, ManySpinsResult } from "@app/services/GameService";
 
 const PANEL_CONFIG = {
   WIDTH: 380,

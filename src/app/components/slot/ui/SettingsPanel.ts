@@ -1,6 +1,7 @@
 import { Container, Graphics, Text } from "pixi.js";
-import { LabeledCheckbox } from "../../common/LabeledCheckbox";
-import { TextInput } from "../../common/TextInput";
+import { LabeledCheckbox } from "@components/common/LabeledCheckbox";
+import { TextInput } from "@components/common/TextInput";
+import { slotSettings } from "@utils/slotSettings";
 
 const PANEL_CONFIG = {
   WIDTH: 300,
@@ -97,6 +98,38 @@ export class SettingsPanel extends Container {
     this.autowinCheckbox = new LabeledCheckbox("Auto Win", PANEL_CONFIG.PADDING, PANEL_CONFIG.PADDING);
     this.autoloseCheckbox = new LabeledCheckbox("Auto Lose", PANEL_CONFIG.PADDING, PANEL_CONFIG.PADDING + PANEL_CONFIG.TEXT.LINE_HEIGHT * 2);
 
+    // Load initial state from storage
+    const autowin = slotSettings.getAutowin();
+    const autolose = slotSettings.getAutolose();
+    
+    // Ensure mutual exclusivity on load
+    if (autowin && autolose) {
+      this.autowinCheckbox.setChecked(true);
+      this.autoloseCheckbox.setChecked(false);
+      slotSettings.setAutolose(false);
+    } else {
+      this.autowinCheckbox.setChecked(autowin);
+      this.autoloseCheckbox.setChecked(autolose);
+    }
+
+    // Set up checkbox change handlers
+    this.autowinCheckbox.onChange(() => {
+      const isChecked = this.autowinCheckbox.isChecked();
+      if (isChecked) {
+        this.autoloseCheckbox.setChecked(false);
+        slotSettings.setAutolose(false);
+      }
+      slotSettings.setAutowin(isChecked);
+    });
+    this.autoloseCheckbox.onChange(() => {
+      const isChecked = this.autoloseCheckbox.isChecked();
+      if (isChecked) {
+        this.autowinCheckbox.setChecked(false);
+        slotSettings.setAutowin(false);
+      }
+      slotSettings.setAutolose(isChecked);
+    });
+
     // Create many spins input
     this.manySpinsLabel = new Text({
       text: "Many Spins Amount:",
@@ -108,7 +141,7 @@ export class SettingsPanel extends Container {
     this.manySpinsInput = new TextInput({
       width: PANEL_CONFIG.INPUT.WIDTH,
       height: PANEL_CONFIG.INPUT.HEIGHT,
-      initialValue: 10000,
+      initialValue: slotSettings.getManySpinsAmount(),
       min: 1,
       max: 10000000,
       colors: PANEL_CONFIG.INPUT.COLORS,
@@ -130,7 +163,7 @@ export class SettingsPanel extends Container {
     this.threeOfAKindInput = new TextInput({
       width: PANEL_CONFIG.INPUT.WIDTH,
       height: PANEL_CONFIG.INPUT.HEIGHT,
-      initialValue: 100,
+      initialValue: slotSettings.getThreeOfAKindWeight(),
       min: 0,
       max: 100,
       colors: PANEL_CONFIG.INPUT.COLORS,
@@ -154,7 +187,7 @@ export class SettingsPanel extends Container {
     this.twoOfAKindInput = new TextInput({
       width: PANEL_CONFIG.INPUT.WIDTH,
       height: PANEL_CONFIG.INPUT.HEIGHT,
-      initialValue: 100,
+      initialValue: slotSettings.getTwoOfAKindWeight(),
       min: 0,
       max: 100,
       colors: PANEL_CONFIG.INPUT.COLORS,
@@ -178,7 +211,7 @@ export class SettingsPanel extends Container {
     this.noWinInput = new TextInput({
       width: PANEL_CONFIG.INPUT.WIDTH,
       height: PANEL_CONFIG.INPUT.HEIGHT,
-      initialValue: 100,
+      initialValue: slotSettings.getNoWinWeight(),
       min: 0,
       max: 100,
       colors: PANEL_CONFIG.INPUT.COLORS,
@@ -208,9 +241,21 @@ export class SettingsPanel extends Container {
     this.addChild(this.noWinProbLabel);
 
     // Set up input change handlers
-    this.threeOfAKindInput.onChange(() => this.updateProbabilityLabels());
-    this.twoOfAKindInput.onChange(() => this.updateProbabilityLabels());
-    this.noWinInput.onChange(() => this.updateProbabilityLabels());
+    this.threeOfAKindInput.onChange(() => {
+      this.updateProbabilityLabels();
+      slotSettings.setThreeOfAKindWeight(Number(this.threeOfAKindInput.getValue()));
+    });
+    this.twoOfAKindInput.onChange(() => {
+      this.updateProbabilityLabels();
+      slotSettings.setTwoOfAKindWeight(Number(this.twoOfAKindInput.getValue()));
+    });
+    this.noWinInput.onChange(() => {
+      this.updateProbabilityLabels();
+      slotSettings.setNoWinWeight(Number(this.noWinInput.getValue()));
+    });
+    this.manySpinsInput.onChange(() => {
+      slotSettings.setManySpinsAmount(Number(this.manySpinsInput.getValue()));
+    });
 
     // Initialize probability labels
     this.updateProbabilityLabels();
