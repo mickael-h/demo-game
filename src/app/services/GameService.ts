@@ -1,8 +1,9 @@
 import { EventDispatcher } from "../utils/EventDispatcher";
 import { SLOT_SYMBOLS, SpinResult, ManySpinsResult, BetOptions, BetRequest } from "@app/types";
+import { config } from "@app/config";
 
 export class GameService {
-  private static readonly API_BASE_URL = "http://localhost:3000";
+  private static readonly API_BASE_URL = config.apiUrl;
 
   public static async spin(bet: number, options: BetOptions = {}): Promise<SpinResult> {
     const request: BetRequest = {
