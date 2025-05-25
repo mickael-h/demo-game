@@ -10,7 +10,7 @@ export class GameService {
       autowin: options.autowin,
       autolose: options.autolose,
       outcomeWeights: options.outcomeWeights,
-      symbolWeights: options.symbolWeights
+      symbolWeights: options.symbolWeights,
     };
 
     const response = await fetch(`${this.API_BASE_URL}/api/bet/place`, {
@@ -29,19 +29,23 @@ export class GameService {
     const spinResult: SpinResult = {
       symbols: result.symbols.map((index: number) => SLOT_SYMBOLS[index]),
       win: result.winAmount,
-      winType: result.winType
+      winType: result.winType,
     };
     EventDispatcher.dispatch("spinResult", spinResult);
     return spinResult;
   }
 
-  public static async manySpins(spins: number, bet: number, options: BetOptions = {}): Promise<ManySpinsResult> {
+  public static async manySpins(
+    spins: number,
+    bet: number,
+    options: BetOptions = {}
+  ): Promise<ManySpinsResult> {
     const request: BetRequest = {
       amount: bet,
       autowin: options.autowin,
       autolose: options.autolose,
       outcomeWeights: options.outcomeWeights,
-      symbolWeights: options.symbolWeights
+      symbolWeights: options.symbolWeights,
     };
 
     const response = await fetch(`${this.API_BASE_URL}/api/bet/many-spins`, {
@@ -51,7 +55,7 @@ export class GameService {
       },
       body: JSON.stringify({
         spins,
-        ...request
+        ...request,
       }),
     });
 
@@ -63,4 +67,4 @@ export class GameService {
     EventDispatcher.dispatch("manySpinsResult", result);
     return result;
   }
-} 
+}

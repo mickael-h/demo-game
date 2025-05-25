@@ -1,8 +1,4 @@
-import type {
-  ApplicationOptions,
-  DestroyOptions,
-  RendererDestroyOptions,
-} from "pixi.js";
+import type { ApplicationOptions, DestroyOptions, RendererDestroyOptions } from "pixi.js";
 import { Application, Assets, extensions, ResizePlugin } from "pixi.js";
 import "pixi.js/app";
 
@@ -57,7 +53,7 @@ export class CreationEngine extends Application {
 
   public override destroy(
     rendererDestroyOptions: RendererDestroyOptions = false,
-    options: DestroyOptions = false,
+    options: DestroyOptions = false
   ): void {
     document.removeEventListener("visibilitychange", this.handleVisibilityChange);
     super.destroy(rendererDestroyOptions, options);

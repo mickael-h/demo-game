@@ -14,13 +14,13 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@app': path.resolve(__dirname, './src/app'),
-      '@engine': path.resolve(__dirname, './src/engine'),
-      '@components': path.resolve(__dirname, './src/app/components'),
-      '@utils': path.resolve(__dirname, './src/app/utils'),
-      '@screens': path.resolve(__dirname, './src/app/screens'),
-      '@popups': path.resolve(__dirname, './src/app/popups'),
-      '@ui': path.resolve(__dirname, './src/app/ui'),
-    }
-  }
+      "@app": path.resolve(__dirname, "./src/app"),
+      "@engine": path.resolve(__dirname, "./src/engine"),
+      "@components": path.resolve(__dirname, "./src/app/components"),
+      "@utils": path.resolve(__dirname, "./src/app/utils"),
+      "@screens": path.resolve(__dirname, "./src/app/screens"),
+      "@popups": path.resolve(__dirname, "./src/app/popups"),
+      "@ui": path.resolve(__dirname, "./src/app/ui"),
+    },
+  },
 });

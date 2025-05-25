@@ -1,6 +1,7 @@
 import { Container, Graphics, Text } from "pixi.js";
 import type { MainScreen } from "@screens/main/MainScreen";
-import { Reel, ReelConfig } from "./Reel";
+import { Reel } from "./Reel";
+import { ReelConfig } from "@app/types";
 import { logger } from "@utils/logger";
 import { BetPanel } from "@components/slot/ui/BetPanel";
 import { GameService } from "@app/services/GameService";
@@ -39,14 +40,14 @@ export class SlotMachine {
       width: SPIN_BUTTON_WIDTH,
       height: SPIN_BUTTON_HEIGHT,
       radius: SPIN_BUTTON_RADIUS,
-      color: 0x4CAF50
+      color: 0x4caf50,
     });
     this.manySpinButton = new TextButton({
       text: "SPIN MANY",
       width: SPIN_BUTTON_WIDTH,
       height: SPIN_BUTTON_HEIGHT,
       radius: SPIN_BUTTON_RADIUS,
-      color: 0x2196F3
+      color: 0x2196f3,
     });
     this.initializeSpinButtons();
   }
@@ -90,7 +91,8 @@ export class SlotMachine {
   private positionBetPanel(): void {
     const totalWidth = REEL_COUNT * (SYMBOL_SIZE + REEL_SPACING) - REEL_SPACING;
     // Align with the middle of the machine's screen
-    const yPosition = -this.totalHeight / 2 + (this.totalHeight - this.betPanel.getTotalHeight()) / 2;
+    const yPosition =
+      -this.totalHeight / 2 + (this.totalHeight - this.betPanel.getTotalHeight()) / 2;
     this.betPanel.setPosition(totalWidth / 2 + 30, yPosition);
   }
 
@@ -101,12 +103,9 @@ export class SlotMachine {
 
   private positionSpinButtons(): void {
     const baseY = this.totalHeight / 2 + SPIN_BUTTON_VERTICAL_MARGIN + SPIN_BUTTON_HEIGHT / 2;
-    
+
     // Position regular spin button
-    this.spinButton.setPosition(
-      -SPIN_BUTTON_WIDTH / 2,
-      baseY
-    );
+    this.spinButton.setPosition(-SPIN_BUTTON_WIDTH / 2, baseY);
 
     // Position thousand spins button
     this.manySpinButton.setPosition(
@@ -124,11 +123,7 @@ export class SlotMachine {
 
   private createBackground(totalWidth: number): void {
     const background = new Graphics();
-    background.roundRect(-20, -20, 
-      totalWidth + 40,
-      this.totalHeight + 40,
-      10
-    ).fill(0x2C3E50);
+    background.roundRect(-20, -20, totalWidth + 40, this.totalHeight + 40, 10).fill(0x2c3e50);
     this.container.addChild(background);
     background.position.set(-totalWidth / 2, -this.totalHeight / 2);
   }
@@ -138,7 +133,7 @@ export class SlotMachine {
       symbolSize: SYMBOL_SIZE,
       reelSpacing: REEL_SPACING,
       visibleSymbols: VISIBLE_SYMBOLS,
-      symbols: ["🍒", "🍊", "🍋", "🍇", "7️⃣", "💎"] // Using symbols directly since GameService no longer provides them
+      symbols: ["🍒", "🍊", "🍋", "🍇", "7️⃣", "💎"], // Using symbols directly since GameService no longer provides them
     };
 
     for (let i = 0; i < REEL_COUNT; i++) {
@@ -161,7 +156,7 @@ export class SlotMachine {
         SYMBOL_SIZE + 10, // height (symbol size plus padding)
         5 // corner radius
       )
-      .stroke({ width: 4, color: 0xFFD700 }); // Yellow border
+      .stroke({ width: 4, color: 0xffd700 }); // Yellow border
     this.container.addChild(this.middleRowHighlight);
   }
 
@@ -210,10 +205,10 @@ export class SlotMachine {
 
   private async animateSpin(symbols: string[]): Promise<void> {
     const REEL_DELAY = 0.5; // Delay between each reel stopping
-    
+
     // Start all reels spinning simultaneously
     const spinPromises = this.reels.map((reel, index) => {
-      const spinDuration = SPIN_DURATION + (index * REEL_DELAY);
+      const spinDuration = SPIN_DURATION + index * REEL_DELAY;
       return reel.spin(spinDuration, symbols[index]);
     });
 
@@ -222,7 +217,7 @@ export class SlotMachine {
   }
 
   public testSymbolVisibility(): boolean {
-    return this.reels.every(reel => reel.testSymbolVisibility());
+    return this.reels.every((reel) => reel.testSymbolVisibility());
   }
 
   public async testSymbolCycling(): Promise<boolean> {
@@ -239,12 +234,12 @@ export class SlotMachine {
     const topLabel = new Text({
       text: "Payouts:\n3 of a kind = 100%\n2 of a kind = 20%",
       style: {
-        fontFamily: 'Arial',
+        fontFamily: "Arial",
         fontSize: 16,
-        fill: 0xFFFFFF,
-        align: 'center',
-        lineHeight: 20
-      }
+        fill: 0xffffff,
+        align: "center",
+        lineHeight: 20,
+      },
     });
     topLabel.anchor.set(0.5, 0);
     topLabel.position.set(0, -220); // Fixed pixel value
@@ -259,18 +254,18 @@ export class SlotMachine {
       { symbol: "🍋", multiplier: "x4" },
       { symbol: "🍇", multiplier: "x5" },
       { symbol: "7️⃣", multiplier: "x10" },
-      { symbol: "💎", multiplier: "x20" }
+      { symbol: "💎", multiplier: "x20" },
     ];
 
     multipliers.forEach((item) => {
       const label = new Text({
         text: `${item.symbol} ${item.multiplier}`,
         style: {
-          fontFamily: 'Arial',
+          fontFamily: "Arial",
           fontSize: 14,
-          fill: 0xFFFFFF,
-          align: 'left'
-        }
+          fill: 0xffffff,
+          align: "left",
+        },
       });
       this.container.addChild(label);
       this.symbolMultiplierLabels.push(label);

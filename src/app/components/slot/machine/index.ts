@@ -1,3 +1,3 @@
-export * from './SlotMachine';
-export * from './Reel';
-export * from './SymbolStrip'; 
+export * from "./SlotMachine";
+export * from "./Reel";
+export * from "./SymbolStrip";

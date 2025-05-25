@@ -38,11 +38,7 @@ export class BGM {
     this.currentAlias = alias;
     this.current.play({ loop: true, ...options });
     this.current.volume = 0;
-    await animate(
-      this.current,
-      { volume: this.volume },
-      { duration: 1, ease: "linear" },
-    );
+    await animate(this.current, { volume: this.volume }, { duration: 1, ease: "linear" });
     this.isPaused = false;
   }
 

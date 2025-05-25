@@ -54,9 +54,7 @@ export class MainScreen extends Container {
       anchor: 0.5,
       animations: buttonAnimations,
     });
-    this.pauseButton.onPress.connect(() =>
-      engine().navigation.presentPopup(PausePopup),
-    );
+    this.pauseButton.onPress.connect(() => engine().navigation.presentPopup(PausePopup));
     this.addChild(this.pauseButton);
 
     this.settingsButton = new FancyButton({
@@ -64,9 +62,7 @@ export class MainScreen extends Container {
       anchor: 0.5,
       animations: buttonAnimations,
     });
-    this.settingsButton.onPress.connect(() =>
-      engine().navigation.presentPopup(SettingsPopup),
-    );
+    this.settingsButton.onPress.connect(() => engine().navigation.presentPopup(SettingsPopup));
     this.addChild(this.settingsButton);
   }
 
@@ -124,7 +120,7 @@ export class MainScreen extends Container {
       finalPromise = animate(
         element,
         { alpha: 1 },
-        { duration: 0.3, delay: 0.75, ease: "backOut" },
+        { duration: 0.3, delay: 0.75, ease: "backOut" }
       );
     }
 

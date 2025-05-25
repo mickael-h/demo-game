@@ -7,13 +7,13 @@ const PANEL_CONFIG = {
   PADDING: 20,
   COLORS: {
     BACKGROUND: 0x333333,
-    TEXT: 0xFFFFFF
+    TEXT: 0xffffff,
   },
   TEXT: {
     FONT_FAMILY: "Arial",
     FONT_SIZE: 16,
-    LINE_HEIGHT: 24
-  }
+    LINE_HEIGHT: 24,
+  },
 };
 
 export class InfoPanel extends Container {
@@ -36,7 +36,7 @@ export class InfoPanel extends Container {
         fontFamily: PANEL_CONFIG.TEXT.FONT_FAMILY,
         fontSize: PANEL_CONFIG.TEXT.FONT_SIZE,
         fill: PANEL_CONFIG.COLORS.TEXT,
-      }
+      },
     });
     this.resultText.position.set(PANEL_CONFIG.PADDING, PANEL_CONFIG.PADDING);
     this.addChild(this.resultText);
@@ -48,17 +48,22 @@ export class InfoPanel extends Container {
         fontFamily: PANEL_CONFIG.TEXT.FONT_FAMILY,
         fontSize: PANEL_CONFIG.TEXT.FONT_SIZE,
         fill: PANEL_CONFIG.COLORS.TEXT,
-      }
+      },
     });
-    this.manySpinsText.position.set(PANEL_CONFIG.PADDING, PANEL_CONFIG.PADDING + PANEL_CONFIG.TEXT.LINE_HEIGHT * 3);
+    this.manySpinsText.position.set(
+      PANEL_CONFIG.PADDING,
+      PANEL_CONFIG.PADDING + PANEL_CONFIG.TEXT.LINE_HEIGHT * 3
+    );
     this.addChild(this.manySpinsText);
 
     // Subscribe to GameService events
-    EventDispatcher.addEventListener("spinResult", (result: SpinResult) => {
+    EventDispatcher.addEventListener("spinResult", (detail: unknown) => {
+      const result = detail as SpinResult;
       this.updateResult(result.symbols, result.win, result.winType);
     });
 
-    EventDispatcher.addEventListener("manySpinsResult", (result: ManySpinsResult) => {
+    EventDispatcher.addEventListener("manySpinsResult", (detail: unknown) => {
+      const result = detail as ManySpinsResult;
       this.updateManySpinsResult(result);
     });
   }
@@ -70,7 +75,7 @@ export class InfoPanel extends Container {
   }
 
   public updateResult(symbols: string[], win: number, winType: string): void {
-    const result = win 
+    const result = win
       ? `Last Spin: ${symbols.join(" ")} - Won ${win} (${winType.replace(/_/g, " ").toLowerCase()})!`
       : `Last Spin: ${symbols.join(" ")} - No Win`;
     this.resultText.text = result;
@@ -86,8 +91,8 @@ export class InfoPanel extends Container {
       `Win Rate: ${result.winRate.toFixed(1)}%`,
       `Return to Player: ${result.returnToPlayer.toFixed(1)}%`,
       `Expectation: ${result.expectation.toFixed(1)}`,
-      `Initial Bet: ${initialBet.toLocaleString()}`
+      `Initial Bet: ${initialBet.toLocaleString()}`,
     ].join("\n");
     this.manySpinsText.text = text;
   }
-} 
+}

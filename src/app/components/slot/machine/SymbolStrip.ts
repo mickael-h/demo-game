@@ -21,8 +21,10 @@ export class SymbolStrip {
   }
 
   private calculateTotalHeight(): number {
-    return this.config.symbolSize * this.config.visibleSymbols + 
-           this.config.reelSpacing * (this.config.visibleSymbols - 1);
+    return (
+      this.config.symbolSize * this.config.visibleSymbols +
+      this.config.reelSpacing * (this.config.visibleSymbols - 1)
+    );
   }
 
   private initialize(): void {
@@ -46,8 +48,8 @@ export class SymbolStrip {
       style: {
         fontFamily: "Arial",
         fontSize: 40,
-        fill: 0xFFFFFF,
-      }
+        fill: 0xffffff,
+      },
     });
   }
 
@@ -68,7 +70,7 @@ export class SymbolStrip {
   }
 
   public randomizeSymbols(): void {
-    this.symbols.forEach(symbol => {
+    this.symbols.forEach((symbol) => {
       symbol.text = this.getRandomSymbol();
     });
   }
@@ -81,7 +83,7 @@ export class SymbolStrip {
   public isVisible(visibleArea: { top: number; bottom: number }): boolean {
     const stripTop = this.container.position.y;
     const stripBottom = stripTop + this.totalHeight;
-    
+
     return !(stripBottom < visibleArea.top || stripTop > visibleArea.bottom);
   }
 
@@ -95,4 +97,4 @@ export class SymbolStrip {
       this.symbols[index].text = symbol;
     }
   }
-} 
+}

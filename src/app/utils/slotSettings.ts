@@ -78,7 +78,8 @@ class SlotSettings {
   /** Get all symbol weights */
   public getSymbolWeights() {
     const weights: { [key: number]: number } = {};
-    for (let i = 0; i < 6; i++) { // Assuming 6 symbols
+    for (let i = 0; i < 6; i++) {
+      // Assuming 6 symbols
       weights[i] = this.getSymbolWeight(i);
     }
     return weights;
@@ -86,4 +87,4 @@ class SlotSettings {
 }
 
 /** Shared slot settings instance */
-export const slotSettings = new SlotSettings(); 
+export const slotSettings = new SlotSettings();

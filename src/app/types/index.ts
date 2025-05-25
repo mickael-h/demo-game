@@ -35,7 +35,7 @@ export interface SymbolStripConfig {
   symbols: string[];
 }
 
-export interface ReelConfig extends SymbolStripConfig {}
+export type ReelConfig = SymbolStripConfig;
 
 // Game Types
 export interface OutcomeWeights {
@@ -84,9 +84,9 @@ export const PANEL_CONFIG = {
   PADDING: 20,
   COLORS: {
     BACKGROUND: 0x333333,
-    TEXT: 0xFFFFFF,
+    TEXT: 0xffffff,
     INPUT_BACKGROUND: 0x444444,
-    INPUT_TEXT: 0xFFFFFF
+    INPUT_TEXT: 0xffffff,
   },
   TEXT: {
     FONT_FAMILY: "Arial",
@@ -95,22 +95,22 @@ export const PANEL_CONFIG = {
     STYLE: {
       fontFamily: "Arial",
       fontSize: 16,
-      fill: 0xFFFFFF
-    }
+      fill: 0xffffff,
+    },
   },
   INPUT: {
     WIDTH: 100,
     HEIGHT: 30,
     COLORS: {
       background: 0x444444,
-      text: 0xFFFFFF,
-      border: 0xFFFFFF
+      text: 0xffffff,
+      border: 0xffffff,
     },
     TEXT_STYLE: {
       fontFamily: "Arial",
-      fontSize: 16
-    }
-  }
+      fontSize: 16,
+    },
+  },
 } as const;
 
 // Game Constants
@@ -121,7 +121,7 @@ export const STORAGE_KEYS = {
   VOLUME: {
     MASTER: "volume-master",
     BGM: "volume-bgm",
-    SFX: "volume-sfx"
+    SFX: "volume-sfx",
   },
   SLOT: {
     MANY_SPINS: "slot-many-spins",
@@ -130,12 +130,12 @@ export const STORAGE_KEYS = {
     NO_WIN_WEIGHT: "slot-no-win-weight",
     AUTOWIN: "slot-autowin",
     AUTOLOSE: "slot-autolose",
-    SYMBOL_WEIGHT_PREFIX: "slot-symbol-weight-"
-  }
+    SYMBOL_WEIGHT_PREFIX: "slot-symbol-weight-",
+  },
 } as const;
 
 // Logging Types
-export type LogLevel = 'info' | 'warn' | 'error' | 'debug';
+export type LogLevel = "info" | "warn" | "error" | "debug";
 
 // Event Types
-export type EventCallback = (detail: any) => void; 
+export type EventCallback = (detail: unknown) => void;

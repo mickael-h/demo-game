@@ -1,3 +1,3 @@
-export * from './InfoPanel';
-export * from './SettingsPanel';
-export * from './BetPanel'; 
+export * from "./InfoPanel";
+export * from "./SettingsPanel";
+export * from "./BetPanel";

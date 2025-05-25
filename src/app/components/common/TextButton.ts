@@ -21,8 +21,7 @@ export class TextButton extends Container {
 
     // Create button background
     this.button = new Graphics();
-    this.button.roundRect(0, 0, config.width, config.height, config.radius)
-      .fill(config.color);
+    this.button.roundRect(0, 0, config.width, config.height, config.radius).fill(config.color);
     this.button.interactive = true;
     this.button.cursor = "pointer";
     this.addChild(this.button);
@@ -33,8 +32,8 @@ export class TextButton extends Container {
       style: {
         fontFamily: config.fontFamily ?? "Arial",
         fontSize: config.fontSize ?? 24,
-        fill: config.textColor ?? 0xFFFFFF,
-      }
+        fill: config.textColor ?? 0xffffff,
+      },
     });
     this.text.anchor.set(0.5);
     this.text.position.set(config.width / 2, config.height / 2);
@@ -65,4 +64,4 @@ export class TextButton extends Container {
   public onPress(callback: () => void): void {
     this.button.on("pointerdown", callback);
   }
-} 
+}

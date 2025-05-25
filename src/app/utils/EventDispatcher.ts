@@ -1,4 +1,4 @@
-type EventCallback = (detail: any) => void;
+import { EventCallback } from "@app/types";
 
 export class EventDispatcher {
   private static listeners: Map<string, Set<EventCallback>> = new Map();
@@ -14,7 +14,7 @@ export class EventDispatcher {
     this.listeners.get(event)?.delete(callback);
   }
 
-  public static dispatch(event: string, detail: any): void {
-    this.listeners.get(event)?.forEach(callback => callback(detail));
+  public static dispatch(event: string, detail: unknown): void {
+    this.listeners.get(event)?.forEach((callback) => callback(detail));
   }
-} 
+}

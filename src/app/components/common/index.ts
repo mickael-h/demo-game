@@ -1,3 +1,3 @@
-export * from './LabeledCheckbox';
-export * from './TextButton';
-export * from './TextInput'; 
+export * from "./LabeledCheckbox";
+export * from "./TextButton";
+export * from "./TextInput";

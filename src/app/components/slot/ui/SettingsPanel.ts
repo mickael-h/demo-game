@@ -35,7 +35,7 @@ export class SettingsPanel extends Container {
     return {
       threeOfAKind: wTrip / total,
       twoOfAKind: wPair / total,
-      noWin: wBust / total
+      noWin: wBust / total,
     };
   }
 
@@ -55,13 +55,21 @@ export class SettingsPanel extends Container {
     this.addChild(this.panel);
 
     // Create checkboxes
-    this.autowinCheckbox = new LabeledCheckbox("Auto Win", PANEL_CONFIG.PADDING, PANEL_CONFIG.PADDING);
-    this.autoloseCheckbox = new LabeledCheckbox("Auto Lose", PANEL_CONFIG.PADDING, PANEL_CONFIG.PADDING + PANEL_CONFIG.TEXT.LINE_HEIGHT * 2);
+    this.autowinCheckbox = new LabeledCheckbox(
+      "Auto Win",
+      PANEL_CONFIG.PADDING,
+      PANEL_CONFIG.PADDING
+    );
+    this.autoloseCheckbox = new LabeledCheckbox(
+      "Auto Lose",
+      PANEL_CONFIG.PADDING,
+      PANEL_CONFIG.PADDING + PANEL_CONFIG.TEXT.LINE_HEIGHT * 2
+    );
 
     // Load initial state from storage
     const autowin = slotSettings.getAutowin();
     const autolose = slotSettings.getAutolose();
-    
+
     // Ensure mutual exclusivity on load
     if (autowin && autolose) {
       this.autowinCheckbox.setChecked(true);
@@ -93,9 +101,12 @@ export class SettingsPanel extends Container {
     // Create many spins input
     this.manySpinsLabel = new Text({
       text: "Many Spins Amount:",
-      style: PANEL_CONFIG.TEXT.STYLE
+      style: PANEL_CONFIG.TEXT.STYLE,
     });
-    this.manySpinsLabel.position.set(PANEL_CONFIG.PADDING, PANEL_CONFIG.PADDING + PANEL_CONFIG.TEXT.LINE_HEIGHT * 4);
+    this.manySpinsLabel.position.set(
+      PANEL_CONFIG.PADDING,
+      PANEL_CONFIG.PADDING + PANEL_CONFIG.TEXT.LINE_HEIGHT * 4
+    );
 
     // Create many spins input
     this.manySpinsInput = new TextInput({
@@ -105,9 +116,12 @@ export class SettingsPanel extends Container {
       min: 1,
       max: 10000000,
       colors: PANEL_CONFIG.INPUT.COLORS,
-      textStyle: PANEL_CONFIG.INPUT.TEXT_STYLE
+      textStyle: PANEL_CONFIG.INPUT.TEXT_STYLE,
     });
-    this.manySpinsInput.position.set(PANEL_CONFIG.PADDING, PANEL_CONFIG.PADDING + PANEL_CONFIG.TEXT.LINE_HEIGHT * 5);
+    this.manySpinsInput.position.set(
+      PANEL_CONFIG.PADDING,
+      PANEL_CONFIG.PADDING + PANEL_CONFIG.TEXT.LINE_HEIGHT * 5
+    );
 
     // Create outcome weights section
     const weightsY = PANEL_CONFIG.PADDING + PANEL_CONFIG.TEXT.LINE_HEIGHT * 7;
@@ -116,7 +130,7 @@ export class SettingsPanel extends Container {
     // Three of a Kind
     this.threeOfAKindLabel = new Text({
       text: "Three of a Kind Weight (% of default):",
-      style: PANEL_CONFIG.TEXT.STYLE
+      style: PANEL_CONFIG.TEXT.STYLE,
     });
     this.threeOfAKindLabel.position.set(PANEL_CONFIG.PADDING, weightsY);
 
@@ -127,20 +141,26 @@ export class SettingsPanel extends Container {
       min: 0,
       max: 100,
       colors: PANEL_CONFIG.INPUT.COLORS,
-      textStyle: PANEL_CONFIG.INPUT.TEXT_STYLE
+      textStyle: PANEL_CONFIG.INPUT.TEXT_STYLE,
     });
-    this.threeOfAKindInput.position.set(PANEL_CONFIG.PADDING, weightsY + PANEL_CONFIG.TEXT.LINE_HEIGHT);
+    this.threeOfAKindInput.position.set(
+      PANEL_CONFIG.PADDING,
+      weightsY + PANEL_CONFIG.TEXT.LINE_HEIGHT
+    );
 
     this.threeOfAKindProbLabel = new Text({
       text: "",
-      style: PANEL_CONFIG.TEXT.STYLE
+      style: PANEL_CONFIG.TEXT.STYLE,
     });
-    this.threeOfAKindProbLabel.position.set(PANEL_CONFIG.PADDING + 110, weightsY + PANEL_CONFIG.TEXT.LINE_HEIGHT + 5);
+    this.threeOfAKindProbLabel.position.set(
+      PANEL_CONFIG.PADDING + 110,
+      weightsY + PANEL_CONFIG.TEXT.LINE_HEIGHT + 5
+    );
 
     // Two of a Kind
     this.twoOfAKindLabel = new Text({
       text: "Two of a Kind Weight (% of default):",
-      style: PANEL_CONFIG.TEXT.STYLE
+      style: PANEL_CONFIG.TEXT.STYLE,
     });
     this.twoOfAKindLabel.position.set(PANEL_CONFIG.PADDING, weightsY + labelSpacing * 2);
 
@@ -151,20 +171,26 @@ export class SettingsPanel extends Container {
       min: 0,
       max: 100,
       colors: PANEL_CONFIG.INPUT.COLORS,
-      textStyle: PANEL_CONFIG.INPUT.TEXT_STYLE
+      textStyle: PANEL_CONFIG.INPUT.TEXT_STYLE,
     });
-    this.twoOfAKindInput.position.set(PANEL_CONFIG.PADDING, weightsY + labelSpacing * 2 + PANEL_CONFIG.TEXT.LINE_HEIGHT);
+    this.twoOfAKindInput.position.set(
+      PANEL_CONFIG.PADDING,
+      weightsY + labelSpacing * 2 + PANEL_CONFIG.TEXT.LINE_HEIGHT
+    );
 
     this.twoOfAKindProbLabel = new Text({
       text: "",
-      style: PANEL_CONFIG.TEXT.STYLE
+      style: PANEL_CONFIG.TEXT.STYLE,
     });
-    this.twoOfAKindProbLabel.position.set(PANEL_CONFIG.PADDING + 110, weightsY + labelSpacing * 2 + PANEL_CONFIG.TEXT.LINE_HEIGHT + 5);
+    this.twoOfAKindProbLabel.position.set(
+      PANEL_CONFIG.PADDING + 110,
+      weightsY + labelSpacing * 2 + PANEL_CONFIG.TEXT.LINE_HEIGHT + 5
+    );
 
     // No Win
     this.noWinLabel = new Text({
       text: "No Win Weight (% of default):",
-      style: PANEL_CONFIG.TEXT.STYLE
+      style: PANEL_CONFIG.TEXT.STYLE,
     });
     this.noWinLabel.position.set(PANEL_CONFIG.PADDING, weightsY + labelSpacing * 4);
 
@@ -175,21 +201,27 @@ export class SettingsPanel extends Container {
       min: 0,
       max: 100,
       colors: PANEL_CONFIG.INPUT.COLORS,
-      textStyle: PANEL_CONFIG.INPUT.TEXT_STYLE
+      textStyle: PANEL_CONFIG.INPUT.TEXT_STYLE,
     });
-    this.noWinInput.position.set(PANEL_CONFIG.PADDING, weightsY + labelSpacing * 4 + PANEL_CONFIG.TEXT.LINE_HEIGHT);
+    this.noWinInput.position.set(
+      PANEL_CONFIG.PADDING,
+      weightsY + labelSpacing * 4 + PANEL_CONFIG.TEXT.LINE_HEIGHT
+    );
 
     this.noWinProbLabel = new Text({
       text: "",
-      style: PANEL_CONFIG.TEXT.STYLE
+      style: PANEL_CONFIG.TEXT.STYLE,
     });
-    this.noWinProbLabel.position.set(PANEL_CONFIG.PADDING + 110, weightsY + labelSpacing * 4 + PANEL_CONFIG.TEXT.LINE_HEIGHT + 5);
+    this.noWinProbLabel.position.set(
+      PANEL_CONFIG.PADDING + 110,
+      weightsY + labelSpacing * 4 + PANEL_CONFIG.TEXT.LINE_HEIGHT + 5
+    );
 
     // Add symbol weights section
     const symbolWeightsY = weightsY + labelSpacing * 6;
     const symbolWeightLabel = new Text({
       text: "Symbol Weights (% of default):",
-      style: PANEL_CONFIG.TEXT.STYLE
+      style: PANEL_CONFIG.TEXT.STYLE,
     });
     symbolWeightLabel.position.set(PANEL_CONFIG.PADDING, symbolWeightsY);
     this.addChild(symbolWeightLabel);
@@ -197,10 +229,10 @@ export class SettingsPanel extends Container {
     // Create inputs for each symbol
     SLOT_SYMBOLS.forEach((symbol, index) => {
       const y = symbolWeightsY + PANEL_CONFIG.TEXT.LINE_HEIGHT * (index + 1);
-      
+
       const symbolLabel = new Text({
         text: `${symbol}:`,
-        style: PANEL_CONFIG.TEXT.STYLE
+        style: PANEL_CONFIG.TEXT.STYLE,
       });
       symbolLabel.position.set(PANEL_CONFIG.PADDING, y);
       this.addChild(symbolLabel);
@@ -212,7 +244,7 @@ export class SettingsPanel extends Container {
         min: 0,
         max: 100,
         colors: PANEL_CONFIG.INPUT.COLORS,
-        textStyle: PANEL_CONFIG.INPUT.TEXT_STYLE
+        textStyle: PANEL_CONFIG.INPUT.TEXT_STYLE,
       });
       input.position.set(PANEL_CONFIG.PADDING + 40, y);
       this.addChild(input);
@@ -282,7 +314,7 @@ export class SettingsPanel extends Container {
     return {
       threeOfAKind: Number(this.threeOfAKindInput.getValue()) / 100,
       twoOfAKind: Number(this.twoOfAKindInput.getValue()) / 100,
-      noWin: Number(this.noWinInput.getValue()) / 100
+      noWin: Number(this.noWinInput.getValue()) / 100,
     };
   }
 
@@ -299,7 +331,7 @@ export class SettingsPanel extends Container {
       autowin: this.isAutowinEnabled(),
       autolose: this.isAutoloseEnabled(),
       outcomeWeights: this.getOutcomeWeights(),
-      symbolWeights: this.getSymbolWeights()
+      symbolWeights: this.getSymbolWeights(),
     };
   }
-} 
+}

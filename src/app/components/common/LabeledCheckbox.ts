@@ -12,12 +12,12 @@ export class LabeledCheckbox extends Container {
     const uncheckedBg = new Graphics()
       .rect(0, 0, 20, 20)
       .fill({ color: 0x666666 })
-      .stroke({ width: 2, color: 0xFFFFFF });
+      .stroke({ width: 2, color: 0xffffff });
 
     const checkedBg = new Graphics()
       .rect(0, 0, 20, 20)
-      .fill({ color: 0x4CAF50 })
-      .stroke({ width: 2, color: 0xFFFFFF });
+      .fill({ color: 0x4caf50 })
+      .stroke({ width: 2, color: 0xffffff });
 
     // Create checkbox
     this.checkbox = new CheckBox({
@@ -37,7 +37,7 @@ export class LabeledCheckbox extends Container {
       style: {
         fontFamily: "Arial",
         fontSize: 16,
-        fill: 0xFFFFFF,
+        fill: 0xffffff,
       },
     });
     this._label.x = 30;
@@ -60,4 +60,4 @@ export class LabeledCheckbox extends Container {
   public onChange(callback: (state: number | boolean) => void): void {
     this.checkbox.onChange.connect(callback);
   }
-} 
+}
