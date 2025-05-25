@@ -1,7 +1,7 @@
 import { Container, Graphics, Text } from "pixi.js";
 import type { MainScreen } from "@screens/main/MainScreen";
 import { Reel } from "./Reel";
-import { ReelConfig } from "@app/types";
+import { ReelConfig, SLOT_SYMBOLS } from "@app/types";
 import { logger } from "@utils/logger";
 import { BetPanel } from "@components/slot/ui/BetPanel";
 import { GameService } from "@app/services/GameService";
@@ -133,7 +133,7 @@ export class SlotMachine {
       symbolSize: SYMBOL_SIZE,
       reelSpacing: REEL_SPACING,
       visibleSymbols: VISIBLE_SYMBOLS,
-      symbols: ["🍒", "🍊", "🍋", "🍇", "7️⃣", "💎"], // Using symbols directly since GameService no longer provides them
+      symbols: [...SLOT_SYMBOLS],
     };
 
     for (let i = 0; i < REEL_COUNT; i++) {
