@@ -26,7 +26,7 @@ export class InfoPanel extends Container {
 
     // Create panel background
     this.panel = new Graphics();
-    this.panel.rect(0, 0, PANEL_CONFIG.WIDTH, 400).fill(PANEL_CONFIG.COLORS.BACKGROUND);
+    this.panel.rect(0, 0, PANEL_CONFIG.WIDTH, 450).fill(PANEL_CONFIG.COLORS.BACKGROUND);
     this.addChild(this.panel);
 
     // Create result text
@@ -91,6 +91,7 @@ export class InfoPanel extends Container {
       `Win Rate: ${result.winRate.toFixed(1)}%`,
       `Return to Player: ${result.returnToPlayer.toFixed(1)}%`,
       `Expectation: ${result.expectation.toFixed(1)}`,
+      `Standard Deviation: ${result.standardDeviation.toFixed(1)}`,
       `Initial Bet: ${initialBet.toLocaleString()}`,
     ].join("\n");
     this.manySpinsText.text = text;

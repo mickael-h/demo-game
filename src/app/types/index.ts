@@ -69,6 +69,7 @@ export interface ManySpinsResult {
   expectation: number;
   winRate: number;
   returnToPlayer: number;
+  standardDeviation: number;
 }
 
 export interface BetOptions {
