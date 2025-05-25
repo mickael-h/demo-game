@@ -24,8 +24,5 @@
   ],
   "github": {
     "silent": true
-  },
-  "env": {
-    "VITE_API_URL": "https://demo-game-server-kappa.vercel.app"
   }
 }
