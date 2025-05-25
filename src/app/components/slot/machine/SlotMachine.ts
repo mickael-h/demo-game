@@ -1,9 +1,10 @@
-import { Container, Graphics, Text } from "pixi.js";
+import { Container, Graphics } from "pixi.js";
 import type { MainScreen } from "../../../screens/main/MainScreen";
 import { Reel, ReelConfig } from "./Reel";
 import { logger } from "../../../utils/logger";
 import { BetPanel } from "../ui/BetPanel";
 import { GameService } from "../../../services/GameService";
+import { TextButton } from "../../common/TextButton";
 
 const REEL_COUNT = 3;
 const SPIN_DURATION = 1;
@@ -14,22 +15,38 @@ const SPIN_BUTTON_VERTICAL_MARGIN = 0; // Vertical margin between machine and sp
 const SPIN_BUTTON_WIDTH = 200;
 const SPIN_BUTTON_HEIGHT = 60;
 const SPIN_BUTTON_RADIUS = 10;
+const BUTTON_SPACING = 10; // Space between spin buttons
 
 export class SlotMachine {
   private reels: Reel[] = [];
   private isSpinning = false;
   private screen!: MainScreen;
-  private spinButton!: Graphics;
-  private spinText!: Text;
+  private spinButton: TextButton;
+  private manySpinButton: TextButton;
   private container: Container;
   private totalHeight: number;
   private betPanel: BetPanel;
+  private middleRowHighlight: Graphics = new Graphics();
 
   constructor() {
     this.container = new Container();
     this.totalHeight = SYMBOL_SIZE * VISIBLE_SYMBOLS + REEL_SPACING * (VISIBLE_SYMBOLS - 1);
     this.betPanel = new BetPanel();
-    this.initializeSpinButton();
+    this.spinButton = new TextButton({
+      text: "SPIN",
+      width: SPIN_BUTTON_WIDTH,
+      height: SPIN_BUTTON_HEIGHT,
+      radius: SPIN_BUTTON_RADIUS,
+      color: 0x4CAF50
+    });
+    this.manySpinButton = new TextButton({
+      text: "SPIN MANY",
+      width: SPIN_BUTTON_WIDTH,
+      height: SPIN_BUTTON_HEIGHT,
+      radius: SPIN_BUTTON_RADIUS,
+      color: 0x2196F3
+    });
+    this.initializeSpinButtons();
   }
 
   public async show(screen: MainScreen): Promise<void> {
@@ -37,8 +54,9 @@ export class SlotMachine {
     this.screen.mainContainer.addChild(this.container);
     this.initializeReels();
     this.container.addChild(this.spinButton);
-    this.container.addChild(this.betPanel.getContainer());
-    this.positionSpinButton();
+    this.container.addChild(this.manySpinButton);
+    this.container.addChild(this.betPanel);
+    this.positionSpinButtons();
     this.positionBetPanel();
     this.resize(screen.width, screen.height);
   }
@@ -54,32 +72,35 @@ export class SlotMachine {
     const totalWidth = REEL_COUNT * (SYMBOL_SIZE + REEL_SPACING) - REEL_SPACING;
     // Align with the middle of the machine's screen
     const yPosition = -this.totalHeight / 2 + (this.totalHeight - this.betPanel.getTotalHeight()) / 2;
-    this.betPanel.setPosition(totalWidth / 2 + 20, yPosition);
+    this.betPanel.setPosition(totalWidth / 2 + 30, yPosition);
   }
 
-  private initializeSpinButton(): void {
-    this.spinButton = new Graphics();
-    this.spinButton.roundRect(0, 0, SPIN_BUTTON_WIDTH, SPIN_BUTTON_HEIGHT, SPIN_BUTTON_RADIUS).fill(0x4CAF50);
-    this.spinButton.interactive = true;
-    this.spinButton.cursor = "pointer";
+  private initializeSpinButtons(): void {
+    this.spinButton.onPress(() => this.spin());
+    this.manySpinButton.onPress(() => this.manySpins());
+  }
 
-    this.spinText = new Text({
-      text: "SPIN",
-      style: {
-        fontFamily: "Arial",
-        fontSize: 24,
-        fill: 0xFFFFFF,
-      }
-    });
-    this.spinText.anchor.set(0.5);
-    this.spinText.position.set(SPIN_BUTTON_WIDTH / 2, SPIN_BUTTON_HEIGHT / 2);
-    this.spinButton.addChild(this.spinText);
+  private positionSpinButtons(): void {
+    const baseY = this.totalHeight / 2 + SPIN_BUTTON_VERTICAL_MARGIN + SPIN_BUTTON_HEIGHT / 2;
+    
+    // Position regular spin button
+    this.spinButton.setPosition(
+      -SPIN_BUTTON_WIDTH / 2,
+      baseY
+    );
+
+    // Position thousand spins button
+    this.manySpinButton.setPosition(
+      -SPIN_BUTTON_WIDTH / 2,
+      baseY + SPIN_BUTTON_HEIGHT + BUTTON_SPACING
+    );
   }
 
   private initializeReels(): void {
-    const totalWidth = REEL_COUNT * (SYMBOL_SIZE + REEL_SPACING) - REEL_SPACING;
+    const totalWidth = REEL_COUNT * SYMBOL_SIZE + (REEL_COUNT - 1) * REEL_SPACING;
     this.createBackground(totalWidth);
     this.createReels(totalWidth);
+    this.createMiddleRowHighlight(totalWidth);
   }
 
   private createBackground(totalWidth: number): void {
@@ -110,24 +131,35 @@ export class SlotMachine {
     }
   }
 
-  private positionSpinButton(): void {
-    this.spinButton.position.set(
-      -SPIN_BUTTON_WIDTH / 2,  // Center the button
-      this.totalHeight / 2 + SPIN_BUTTON_VERTICAL_MARGIN + SPIN_BUTTON_HEIGHT / 2
-    );
-    this.spinButton.on("pointerdown", () => this.spin());
+  private createMiddleRowHighlight(totalWidth: number): void {
+    // Create a yellow highlight rectangle around the middle row
+    this.middleRowHighlight = new Graphics();
+    this.middleRowHighlight
+      .roundRect(
+        -totalWidth / 2 - 10, // x position (centered)
+        -SYMBOL_SIZE / 2 - 5, // y position (middle row)
+        totalWidth + 20, // width (full width plus padding)
+        SYMBOL_SIZE + 10, // height (symbol size plus padding)
+        5 // corner radius
+      )
+      .stroke({ width: 4, color: 0xFFD700 }); // Yellow border
+    this.container.addChild(this.middleRowHighlight);
   }
 
   private async spin(): Promise<void> {
     if (this.isSpinning) return;
     this.isSpinning = true;
-    this.spinButton.interactive = false;
+    this.spinButton.setEnabled(false);
+    this.manySpinButton.setEnabled(false);
 
     try {
       const result = await GameService.spin(
         this.betPanel.getCurrentBet(),
-        this.screen.settingsPanel?.isAutowinEnabled() ?? false,
-        this.screen.settingsPanel?.isAutoloseEnabled() ?? false
+        {
+          autowin: this.screen.settingsPanel?.isAutowinEnabled() ?? false,
+          autolose: this.screen.settingsPanel?.isAutoloseEnabled() ?? false,
+          outcomeWeights: this.screen.settingsPanel?.getOutcomeWeights()
+        }
       );
 
       await this.animateSpin(result.symbols);
@@ -135,7 +167,33 @@ export class SlotMachine {
       logger.error("Failed to spin:", error);
     } finally {
       this.isSpinning = false;
-      this.spinButton.interactive = true;
+      this.spinButton.setEnabled(true);
+      this.manySpinButton.setEnabled(true);
+    }
+  }
+
+  private async manySpins(): Promise<void> {
+    if (this.isSpinning) return;
+    this.isSpinning = true;
+    this.spinButton.setEnabled(false);
+    this.manySpinButton.setEnabled(false);
+
+    try {
+      await GameService.manySpins(
+        this.screen.settingsPanel?.getManySpinsAmount() ?? 1000,
+        this.betPanel.getCurrentBet(),
+        {
+          autowin: this.screen.settingsPanel?.isAutowinEnabled() ?? false,
+          autolose: this.screen.settingsPanel?.isAutoloseEnabled() ?? false,
+          outcomeWeights: this.screen.settingsPanel?.getOutcomeWeights()
+        }
+      );
+    } catch (error) {
+      logger.error("Failed to perform many spins:", error);
+    } finally {
+      this.isSpinning = false;
+      this.spinButton.setEnabled(true);
+      this.manySpinButton.setEnabled(true);
     }
   }
 

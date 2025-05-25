@@ -1,50 +1,81 @@
-interface SpinResult {
-  symbols: string[];
-  winAmount: number;
-  isWin: boolean;
-  betAmount: number;
-}
+import { EventDispatcher } from "../utils/EventDispatcher";
+import type { OutcomeWeights } from "../components/slot/ui/SettingsPanel";
 
 const SLOT_SYMBOLS = ["🍒", "🍊", "🍋", "🍇", "7️⃣", "💎"];
 
+export interface SpinResult {
+  symbols: string[];
+  win: number;
+  winType: "THREE_OF_A_KIND" | "TWO_OF_A_KIND" | "NO_WIN";
+}
+
+export interface ManySpinsResult {
+  totalSpins: number;
+  totalWinAmount: number;
+  totalBetAmount: number;
+  expectation: number;
+  winRate: number;
+  returnToPlayer: number;
+}
+
+export interface BetOptions {
+  autowin?: boolean;
+  autolose?: boolean;
+  outcomeWeights?: OutcomeWeights;
+}
+
 export class GameService {
-  private static readonly API_URL = 'http://localhost:3000';
-  private static eventTarget = new EventTarget();
-  public static readonly SPIN_RESULT_EVENT = 'spinResult';
+  private static readonly API_BASE_URL = "http://localhost:3000";
 
-  public static addEventListener(event: string, callback: EventListener): void {
-    this.eventTarget.addEventListener(event, callback);
-  }
-
-  public static removeEventListener(event: string, callback: EventListener): void {
-    this.eventTarget.removeEventListener(event, callback);
-  }
-
-  private static dispatchEvent(event: string, detail: any): void {
-    this.eventTarget.dispatchEvent(new CustomEvent(event, { detail }));
-  }
-
-  public static async spin(bet: number, autowin: boolean, autolose: boolean): Promise<SpinResult> {
-    const response = await fetch(`${this.API_URL}/api/bet/place`, {
-      method: 'POST',
+  public static async spin(bet: number, options: BetOptions = {}): Promise<SpinResult> {
+    const response = await fetch(`${this.API_BASE_URL}/api/bet/place`, {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ amount: bet, autowin, autolose })
+      body: JSON.stringify({
+        amount: bet,
+        autowin: options.autowin,
+        autolose: options.autolose,
+        outcomeWeights: options.outcomeWeights
+      }),
     });
 
     if (!response.ok) {
-      throw new Error('Failed to get spin results');
+      throw new Error(`Failed to place bet: ${response.statusText}`);
     }
 
     const result = await response.json();
-    const spinResult = {
-      ...result,
+    const spinResult: SpinResult = {
       symbols: result.symbols.map((index: number) => SLOT_SYMBOLS[index]),
-      betAmount: bet
+      win: result.winAmount,
+      winType: result.winType
     };
-    
-    this.dispatchEvent(this.SPIN_RESULT_EVENT, spinResult);
+    EventDispatcher.dispatch("spinResult", spinResult);
     return spinResult;
+  }
+
+  public static async manySpins(spins: number, bet: number, options: BetOptions = {}): Promise<ManySpinsResult> {
+    const response = await fetch(`${this.API_BASE_URL}/api/bet/many-spins`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        spins,
+        amount: bet,
+        autowin: options.autowin,
+        autolose: options.autolose,
+        outcomeWeights: options.outcomeWeights
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to perform many spins: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    EventDispatcher.dispatch("manySpinsResult", result);
+    return result;
   }
 } 

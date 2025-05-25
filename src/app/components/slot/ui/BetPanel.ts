@@ -1,37 +1,36 @@
 import { Container, Graphics, Text } from "pixi.js";
 
-const BET_AMOUNTS = [1, 5, 20];
+const BET_AMOUNTS = [100, 50, 25, 10, 5, 1];
 
 // Bet button configuration
 const BET_BUTTON = {
   SIZE: 40,
   SPACING: 10,
   COLORS: {
-    SELECTED: 0x4CAF50,
-    UNSELECTED: 0x2C3E50
+    DEFAULT: 0x4CAF50,
+    SELECTED: 0x2196F3,
+    TEXT: 0xFFFFFF
   },
   TEXT: {
     FONT_FAMILY: "Arial",
-    FONT_SIZE: 16,
-    COLOR: 0xFFFFFF
+    FONT_SIZE: 16
   }
 };
 
-export class BetPanel {
-  private container: Container;
+export class BetPanel extends Container {
   private betButtons: Graphics[] = [];
-  private currentBet: number = 1;
+  private currentBet: number = BET_AMOUNTS[0];
 
   constructor() {
-    this.container = new Container();
-    this.initializeBetButtons();
+    super();
+    this.initialize();
   }
 
-  private initializeBetButtons(): void {
+  private initialize(): void {
     BET_AMOUNTS.forEach((amount, index) => {
       const button = this.createBetButton(amount, index);
       this.betButtons.push(button);
-      this.container.addChild(button);
+      this.addChild(button);
     });
   }
 
@@ -48,10 +47,9 @@ export class BetPanel {
 
   private drawBetButton(button: Graphics, amount: number, yPosition: number): void {
     const isSelected = amount === this.currentBet;
-    const fillColor = isSelected ? BET_BUTTON.COLORS.SELECTED : BET_BUTTON.COLORS.UNSELECTED;
-    
-    button.roundRect(10, yPosition, BET_BUTTON.SIZE, BET_BUTTON.SIZE, 5)
-      .fill(fillColor);
+    button.clear();
+    button.roundRect(0, yPosition, BET_BUTTON.SIZE, BET_BUTTON.SIZE, 5)
+      .fill(isSelected ? BET_BUTTON.COLORS.SELECTED : BET_BUTTON.COLORS.DEFAULT);
   }
 
   private addBetButtonText(button: Graphics, amount: number, yPosition: number): void {
@@ -60,28 +58,21 @@ export class BetPanel {
       style: {
         fontFamily: BET_BUTTON.TEXT.FONT_FAMILY,
         fontSize: BET_BUTTON.TEXT.FONT_SIZE,
-        fill: BET_BUTTON.TEXT.COLOR,
+        fill: BET_BUTTON.COLORS.TEXT,
       }
     });
-    
     text.anchor.set(0.5);
-    text.position.set(
-      BET_BUTTON.SIZE / 2 + BET_BUTTON.SPACING,
-      BET_BUTTON.SIZE / 2 + yPosition
-    );
-    
+    text.position.set(BET_BUTTON.SIZE / 2, yPosition + BET_BUTTON.SIZE / 2);
     button.addChild(text);
   }
 
   private makeBetButtonInteractive(button: Graphics, amount: number): void {
-    button.interactive = true;
-    button.cursor = "pointer";
-    button.on("pointerdown", () => this.setBet(amount));
-  }
-
-  private setBet(amount: number): void {
-    this.currentBet = amount;
-    this.updateBetButtonColors();
+    button.eventMode = 'static';
+    button.cursor = 'pointer';
+    button.on('pointerdown', () => {
+      this.currentBet = amount;
+      this.updateBetButtonColors();
+    });
   }
 
   private updateBetButtonColors(): void {
@@ -92,19 +83,15 @@ export class BetPanel {
     });
   }
 
-  public getContainer(): Container {
-    return this.container;
-  }
-
   public getCurrentBet(): number {
     return this.currentBet;
   }
 
-  public setPosition(x: number, y: number): void {
-    this.container.position.set(x, y);
+  public getTotalHeight(): number {
+    return BET_AMOUNTS.length * (BET_BUTTON.SIZE + BET_BUTTON.SPACING) - BET_BUTTON.SPACING;
   }
 
-  public getTotalHeight(): number {
-    return BET_AMOUNTS.length * (BET_BUTTON.SIZE + BET_BUTTON.SPACING);
+  public setPosition(x: number, y: number): void {
+    this.position.set(x, y);
   }
 } 
