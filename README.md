@@ -1,6 +1,7 @@
 # Demo Slot Game
 
 A simple slot machine game built with PixiJS v8, created as an experiment to explore the capabilities of the PixiJS game engine.
+Production is deployed to: https://demo-game-olive.vercel.app/
 
 ## Features
 
